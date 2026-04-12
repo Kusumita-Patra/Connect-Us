@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marketplace</title>
+</head>
+<body>
+
+<h2>📦 Campus Marketplace</h2>
+
+<form method="GET">
+    <input type="text" name="search" placeholder="Search item...">
+
+    <select name="category">
+        <option>All</option>
+        <option>Books</option>
+        <option>Electronics</option>
+        <option>Lab Equipment</option>
+        <option>Hostel Items</option>
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+
+<br>
+<a href="/upload">➕ Upload Item</a>
+
+<hr>
+
+<h3>Items:</h3>
+
+{% for item in items %}
+<div style="border:1px solid black; padding:10px; margin:10px;">
+    <b>{{ item[1] }}</b><br>
+    ₹{{ item[2] }}<br>
+    Category: {{ item[3] }}
+</div>
+{% endfor %}
+
+</body>
+</html>
