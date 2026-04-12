@@ -1,27 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload Item</title>
+  <title>Upload Item</title>
 </head>
 <body>
 
 <h2>Upload Item</h2>
 
-<form method="POST">
-    Name: <input type="text" name="name" required><br><br>
+<input type="text" id="name" placeholder="Item name"><br><br>
+<input type="number" id="price" placeholder="Price"><br><br>
 
-    Price: <input type="number" name="price" required><br><br>
+<select id="category">
+  <option>Books</option>
+  <option>Electronics</option>
+  <option>Lab Equipment</option>
+  <option>Hostel Items</option>
+</select><br><br>
 
-    Category:
-    <select name="category">
-        <option>Books</option>
-        <option>Electronics</option>
-        <option>Lab Equipment</option>
-        <option>Hostel Items</option>
-    </select><br><br>
+<button onclick="uploadItem()">Upload</button>
 
-    <button type="submit">Upload</button>
-</form>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "YOUR_KEY",
+    authDomain: "YOUR_DOMAIN",
+    projectId: "YOUR_PROJECT_ID"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  function uploadItem() {
+    let name = document.getElementById("name").value;
+    let price = document.getElementById("price").value;
+    let category = document.getElementById("category").value;
+
+    db.collection("items").add({
+      name: name,
+      price: price,
+      category: category
+    }).then(() => {
+      alert("Item uploaded!");
+      window.location.href = "index.html";
+    });
+  }
+</script>
 
 </body>
 </html>
