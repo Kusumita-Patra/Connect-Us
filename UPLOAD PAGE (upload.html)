@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Item</title>
+</head>
+<body>
+
+<h2>Upload Item</h2>
+
+<form method="POST">
+    Name: <input type="text" name="name" required><br><br>
+
+    Price: <input type="number" name="price" required><br><br>
+
+    Category:
+    <select name="category">
+        <option>Books</option>
+        <option>Electronics</option>
+        <option>Lab Equipment</option>
+        <option>Hostel Items</option>
+    </select><br><br>
+
+    <button type="submit">Upload</button>
+</form>
+
+</body>
+</html>
