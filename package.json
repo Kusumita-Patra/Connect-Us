@@ -1,5 +1,4 @@
 {
-  "name": "campus-marketplace",
   "name": "react-app",
   "version": "0.1.0",
   "private": true,
@@ -11,7 +10,7 @@
     "firebase": "^12.12.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-router-dom": "^7.14.0",
+    "react-router-dom": "^7.14.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
