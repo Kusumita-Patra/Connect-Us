@@ -1,14 +1,32 @@
 import "./Home.css";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase.js"; // ⚠️ adjust path if needed
+
 
 const Home = () => {
 
   const [items, setItems] = useState([]);
+  const navigate = useNavigate();
 
   // 🔥 Later connect Firebase here
+
   useEffect(() => {
-    setItems([]); // keep empty for now
+    const fetchItems = async () => {
+      const querySnapshot = await getDocs(collection(db, "items"));
+
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      setItems(data);
+    };
+
+    fetchItems();
   }, []);
+  
   return (
     <div>
 
@@ -20,6 +38,13 @@ const Home = () => {
     <input placeholder="Search items, books, electronics..." />
     <button>Search</button>
   </div>
+      <div>
+      <h1>Home Page</h1>
+
+      <button onClick={() => navigate("/upload")}>
+        Upload Item
+      </button>
+    </div>
 
   {/* NEW: Buy + Sell buttons */}
   <div className="navActions">
@@ -76,8 +101,13 @@ const Home = () => {
       items.map((item) => (
         <div className="listingCard" key={item.id}>
           <img src={item.imageUrl} alt={item.name} />
+          
           <p>{item.name}</p>
+          <p>{item.description}</p> {/* ADD THIS */}
+          
           <h3>₹{item.price}</h3>
+          <p>{item.category}</p> {/* ADD THIS */}
+
           <button>Buy Now</button>
         </div>
       ))

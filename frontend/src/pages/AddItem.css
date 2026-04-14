@@ -1,0 +1,77 @@
+.addItemPage {
+  min-height: 100vh;
+  background: linear-gradient(to right, #f8f9ff, #eef1ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.addItemCard {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.addItemCard h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.addItemForm input,
+.addItemForm textarea,
+.addItemForm select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.addItemForm input:focus,
+.addItemForm textarea:focus,
+.addItemForm select:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 5px rgba(108, 99, 255, 0.3);
+}
+
+.addItemForm textarea {
+  resize: none;
+  height: 80px;
+}
+
+.imagePreview {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.imagePreview img {
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.uploadBtn {
+  width: 100%;
+  padding: 12px;
+  background: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.uploadBtn:hover {
+  background: #574fd6;
+}
+
+.uploadBtn:active {
+  transform: scale(0.98);
+}
