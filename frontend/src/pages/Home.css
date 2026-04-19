@@ -426,3 +426,17 @@ body {
   background: #e68a00;
 }
 
+.uploadNavBtn {
+  background: #8c31ed;   /* green */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 10px;
+}
+
+.uploadNavBtn:hover {
+  background: #8c31ed;
+}

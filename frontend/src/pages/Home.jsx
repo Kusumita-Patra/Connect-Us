@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase.js";
 
+
 const Home = () => {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
@@ -63,15 +64,18 @@ const Home = () => {
         </div>
 
         <div>
-          <button onClick={() => navigate("/upload")}>
-            Upload Item
-          </button>
+          <button className="uploadNavBtn" onClick={() => navigate("/upload")}>
+         + Upload Item
+        </button>
         </div>
 
         <div className="navActions">
           <button className="buyBtn">Buy Items</button>
           <button className="sellBtn">Sell Items</button>
         </div>
+        <button onClick={() => navigate("/items")}>
+        View All Items
+        </button>
 
         <div className="navIcons">
           <span>My Account</span>
