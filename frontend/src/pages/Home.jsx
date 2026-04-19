@@ -39,7 +39,7 @@ const Home = () => {
     <button>Search</button>
   </div>
       <div>
-      <h1>Home Page</h1>
+      
 
       <button onClick={() => navigate("/upload")}>
         Upload Item
