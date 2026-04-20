@@ -63,20 +63,26 @@ const Home = () => {
   </button>
         </div>
 
-        <div>
-          <button className="uploadNavBtn" onClick={() => navigate("/upload")}>
-         + Upload Item
-        </button>
-        </div>
-
         <div className="navActions">
-          <button className="buyBtn">Buy Items</button>
-          <button className="sellBtn">Sell Items</button>
+          <button
+  className="buyBtn"
+  onClick={() => navigate("/items")}
+>
+  Buy Items
+</button>
+          <button
+  className="sellBtn"
+  onClick={() => navigate("/upload")}
+>
+  Sell Items
+</button>
         </div>
-        <button onClick={() => navigate("/items")}>
-        View All Items
-        </button>
-
+        <button
+  className="viewAllBtn"
+  onClick={() => navigate("/items")}
+>
+  View All Items
+</button>
         <div className="navIcons">
           <span>My Account</span>
           <span>Cart</span>
@@ -93,17 +99,22 @@ const Home = () => {
           </p>
 
           <div className="actionCards">
-            <div className="card buy">
-              <img src="https://cdn-icons-png.flaticon.com/512/2331/2331970.png" />
-              <button>Buy Items</button>
-            </div>
+            <div
+  className="card buy"
+  onClick={() => navigate("/items")}
+>
+  <img src="https://cdn-icons-png.flaticon.com/512/2331/2331970.png" />
+  <button>Buy Items</button>
+</div>
 
             <div className="or">OR</div>
 
             <div className="card sell">
-              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" />
-              <button>Sell Items</button>
-            </div>
+  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" />
+  <button onClick={() => navigate("/upload")}>
+    Sell Items
+  </button>
+</div>
           </div>
         </div>
       </section>

@@ -440,3 +440,62 @@ body {
 .uploadNavBtn:hover {
   background: #8c31ed;
 }
+
+/* smooth animation */
+.card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* hover effect */
+.card:hover {
+  transform: translateY(-6px) scale(1.02);  /* slight lift + zoom */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* optional: make it feel clickable */
+.card {
+  cursor: pointer;
+}
+
+.card:hover img {
+  transform: scale(1.05);
+}
+
+.card img {
+  transition: transform 0.3s ease;
+}
+
+.viewAllBtn {
+  padding: 8px 14px;
+  margin-left: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* hover effect */
+.viewAllBtn:hover {
+  background: #e68a00;
+  border-color: #bbb;
+}
+
+.viewAllBtn {
+  padding: 8px 16px;
+  margin-left: 10px;
+  border-radius: 6px;
+  border: none;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.viewAllBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+}
