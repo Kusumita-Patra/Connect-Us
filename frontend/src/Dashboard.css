@@ -1,0 +1,15 @@
+.dashboardContainer {
+  padding: 30px;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoutBtn {
+  background: red;
+  color: white;
+  padding: 8px 12px;
+}

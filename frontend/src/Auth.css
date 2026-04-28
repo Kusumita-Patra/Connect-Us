@@ -1,0 +1,42 @@
+.authContainer {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #4a90e2, #6dd5fa);
+}
+
+.authBox {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  width: 320px;
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.authBox h2 {
+  margin-bottom: 20px;
+  color: var(--secondary);
+}
+
+.authBox input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.authBtn {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+}
+
+.authLink {
+  margin-top: 15px;
+  font-size: 14px;
+}

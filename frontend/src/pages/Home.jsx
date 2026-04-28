@@ -2,90 +2,125 @@ import "./Home.css";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase.js";
-
+import { db } from "../firebase";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Home = () => {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
+  // ✅ Fetch items
   useEffect(() => {
     const fetchItems = async () => {
-      const querySnapshot = await getDocs(collection(db, "items"));
+      try {
+        const querySnapshot = await getDocs(collection(db, "items"));
 
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-      setItems(data);
+        setItems(data);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
     };
 
     fetchItems();
   }, []);
 
+  // ✅ Auth listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div>
-
       {/* Navbar */}
       <nav className="navbar">
         <h2 className="logo">Connect Us</h2>
 
-        {/* ✅ UPDATED SEARCH BAR */}
+        {/* Search Bar */}
         <div className="searchBar">
           <select
-    className="searchCategory"
-    value={category}
-    onChange={(e) => setCategory(e.target.value)}
-  >
-    <option value="">All</option>
-    <option value="Books">Books</option>
-    <option value="Electronics">Electronics</option>
-  </select>
+            className="searchCategory"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="Books">Books</option>
+            <option value="Electronics">Electronics</option>
+          </select>
 
-  <input
-    className="searchInput"
-    placeholder="Search items, books, electronics..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
+          <input
+            className="searchInput"
+            placeholder="Search items, books, electronics..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-  <button
-    className="searchBtn"
-    onClick={() =>
-      navigate(`/search?query=${search}&category=${category}`)
-    }
-  >
-    Search
-  </button>
+          <button
+            className="searchBtn"
+            onClick={() =>
+              navigate(`/search?query=${search}&category=${category}`)
+            }
+          >
+            Search
+          </button>
         </div>
 
+        {/* Actions */}
         <div className="navActions">
+          <button className="buyBtn" onClick={() => navigate("/items")}>
+            Buy Items
+          </button>
+
           <button
-  className="buyBtn"
-  onClick={() => navigate("/items")}
->
-  Buy Items
-</button>
-          <button
-  className="sellBtn"
-  onClick={() => navigate("/upload")}
->
-  Sell Items
-</button>
+            className="sellBtn"
+            onClick={() => {
+              if (user) {
+                navigate("/upload");
+              } else {
+                alert("Please login first!");
+                navigate("/login");
+              }
+            }}
+          >
+            Sell Items
+          </button>
         </div>
+
         <button
-  className="viewAllBtn"
-  onClick={() => navigate("/items")}
->
-  View All Items
-</button>
+          className="viewAllBtn"
+          onClick={() => navigate("/items")}
+        >
+          View All Items
+        </button>
+
+        {/* User Section */}
         <div className="navIcons">
-          <span>My Account</span>
-          <span>Cart</span>
+          {user ? (
+            <>
+              <span>{user.name}</span>
+              <span onClick={() => navigate("/dashboard")}>
+                Dashboard
+              </span>
+            </>
+          ) : (
+            <>
+              <span onClick={() => navigate("/login")}>Login</span>
+              <span onClick={() => navigate("/signup")}>Signup</span>
+            </>
+          )}
         </div>
       </nav>
 
@@ -100,21 +135,30 @@ const Home = () => {
 
           <div className="actionCards">
             <div
-  className="card buy"
-  onClick={() => navigate("/items")}
->
-  <img src="https://cdn-icons-png.flaticon.com/512/2331/2331970.png" />
-  <button>Buy Items</button>
-</div>
+              className="card buy"
+              onClick={() => navigate("/items")}
+            >
+              <img src="https://cdn-icons-png.flaticon.com/512/2331/2331970.png" alt="buy" />
+              <button>Buy Items</button>
+            </div>
 
             <div className="or">OR</div>
 
             <div className="card sell">
-  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" />
-  <button onClick={() => navigate("/upload")}>
-    Sell Items
-  </button>
-</div>
+              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" alt="sell" />
+              <button
+                onClick={() => {
+                  if (user) {
+                    navigate("/upload");
+                  } else {
+                    alert("Please login first!");
+                    navigate("/login");
+                  }
+                }}
+              >
+                Sell Items
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -128,7 +172,12 @@ const Home = () => {
             <p className="emptyMsg">No items uploaded yet</p>
           ) : (
             items.map((item) => (
-              <div className="listingCard" key={item.id}>
+              <div
+                className="listingCard"
+                key={item.id}
+                onClick={() => navigate(`/item/${item.id}`)}
+                style={{ cursor: "pointer" }}
+              >
                 <img src={item.imageUrl} alt={item.name} />
 
                 <p>{item.name}</p>
@@ -167,7 +216,6 @@ const Home = () => {
           </div>
         </footer>
       </div>
-
     </div>
   );
 };

@@ -1,0 +1,25 @@
+/* Global Theme */
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #f5f7fa;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Primary Colors */
+:root {
+  --primary: #4a90e2;
+  --secondary: #2c3e50;
+  --accent: #27ae60;
+}
