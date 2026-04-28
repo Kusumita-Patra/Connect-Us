@@ -101,7 +101,8 @@ const buttonStyle = {
   marginTop: "10px",
   width: "100%",
   padding: "8px",
-  backgroundColor: "#3498db",
+  backgroundColor: "#ffa73c",
+  fontWeight: "bold",
   color: "#fff",
   border: "none",
   borderRadius: "6px",
@@ -111,7 +112,7 @@ const headerBar = {
   width: "100%",
   padding: "20px 0",
   marginBottom: "20px",
-  background: "linear-gradient(135deg, #4f46e5, #4f46e5)",
+  background: "linear-gradient(135deg, #fff648, #e5a846)",
   //borderBottom: "6px solid #1f2a38",
   boxShadow: "0 4px 8px rgba(0,0,0,0.2)"
 };
