@@ -113,7 +113,7 @@ const Home = () => {
             <>
               <span>{user.name}</span>
               <span onClick={() => navigate("/dashboard")}>
-                Dashboard
+                My Profile
               </span>
             </>
           ) : (

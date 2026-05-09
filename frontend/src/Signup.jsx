@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth } from "./firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "./firebase";
 import { doc, setDoc } from "firebase/firestore";
@@ -10,6 +10,8 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [mobileNumber, setmobileNumber] = useState("");
+  const [location, setLocation] = useState("");
 
   const navigate = useNavigate();
 
@@ -25,6 +27,10 @@ const handleSignup = async () => {
     await setDoc(doc(db, "users", user.uid), {
       username: username,
       email: email,
+      mobileNumber: mobileNumber,
+      location: location,
+      uid: user.uid,
+      createdAt: new Date(),
     });
 
     alert("User Registered Successfully!");
@@ -49,6 +55,18 @@ const handleSignup = async () => {
           type="email"
           placeholder="Enter email"
           onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+        type="tel"
+        value= {mobileNumber}
+        placeholder="Enter Mobile no"
+        onChange={(e) => setmobileNumber(e.target.value)}
+      />
+        <input
+          type="text"
+          placeholder="Enter Institue Name "
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
         />
 
         <input
