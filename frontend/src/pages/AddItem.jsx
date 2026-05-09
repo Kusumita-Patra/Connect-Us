@@ -8,11 +8,16 @@ const AddItem = () => {
   const navigate = useNavigate();
 
   const [item, setItem] = useState({
-    name: "",
-    description: "",
-    price: "",
-    category: ""
-  });
+  name: "",
+  description: "",
+  price: "",
+  category: "",
+
+  sellerName: "",
+  sellerPhone: "",
+  sellerEmail: "",
+  sellerLocation: ""
+});
 
   const [image, setImage] = useState(null);
 
@@ -117,6 +122,42 @@ const AddItem = () => {
             <option value="Electronics">Electronics</option>
             <option value="Stationery">Stationery</option>
           </select>
+
+          <input
+            type="text"
+            name="sellerName"
+            placeholder="Seller Name"
+            value={item.sellerName}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="sellerPhone"
+            placeholder="Phone Number"
+            value={item.sellerPhone}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="email"
+            name="sellerEmail"
+            placeholder="Seller Email"
+            value={item.sellerEmail}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="sellerLocation"
+            placeholder="Location"
+            value={item.sellerLocation}
+            onChange={handleChange}
+            required
+          />
 
           {/* Image Upload */}
           <input type="file" onChange={handleImageChange} required />

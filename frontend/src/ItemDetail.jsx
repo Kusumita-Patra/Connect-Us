@@ -55,15 +55,20 @@ function ItemDetail() {
           </div>
 
           {/* Buttons */}
-          <div className="actionButtons">
-            <button className="buyBtn">
-              Buy Now
-            </button>
+         <div className="actionButtons">
 
-            <button className="contactBtn">
-              Add to Cart
-            </button>
-          </div>
+          <button
+            className="buyBtn"
+            onClick={() => window.location.href = `/contact/${id}`}
+          >
+            Contact Seller
+          </button>
+
+          <button className="contactBtn">
+            Add to Cart
+          </button>
+
+        </div>
         </div>
 
       </div>

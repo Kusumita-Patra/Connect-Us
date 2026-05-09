@@ -1,3 +1,4 @@
+import ContactSeller from "./ContactSeller";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -33,6 +34,9 @@ function App() {
         <Route path="/search" element={<SearchResults />} />
         <Route path="/items" element={<ItemList />} />
         <Route path="/item/:id" element={<ItemDetail />} />
+
+        <Route path="/contact/:id" element={<ContactSeller />} />
+
         <Route path="/dashboard" element={<Dashboard />} />
         
       </Routes>
