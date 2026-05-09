@@ -16,7 +16,7 @@ function Login() {
       await signInWithEmailAndPassword(auth, email, password);
 
       alert("Login Successful!");
-      navigate("/dashboard");
+      navigate("/");
 
     } catch (error) {
       alert(error.message);
