@@ -8,6 +8,7 @@ import "./Auth.css";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+ 
 
   const navigate = useNavigate();
 
@@ -16,7 +17,7 @@ function Login() {
       await signInWithEmailAndPassword(auth, email, password);
 
       alert("Login Successful!");
-      navigate("/dashboard");
+      navigate("/");
 
     } catch (error) {
       alert(error.message);
