@@ -12,6 +12,7 @@ function Signup() {
   const [username, setUsername] = useState("");
   const [mobileNumber, setmobileNumber] = useState("");
   const [location, setLocation] = useState("");
+  const [address, setAddress] = useState("");
 
   const navigate = useNavigate();
 
@@ -29,6 +30,7 @@ const handleSignup = async () => {
       email: email,
       mobileNumber: mobileNumber,
       location: location,
+      address: address,
       uid: user.uid,
       createdAt: new Date(),
     });
@@ -67,6 +69,12 @@ const handleSignup = async () => {
           placeholder="Enter Institue Name "
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Enter Residential Address  "
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
         />
 
         <input

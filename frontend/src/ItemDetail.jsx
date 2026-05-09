@@ -3,11 +3,27 @@ import { useParams } from "react-router-dom";
 import { db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 import "./ItemDetail.css";
+import { sendChatNotification } from "./services/notificationService";
 
 function ItemDetail() {
   const { id } = useParams();
   const [item, setItem] = useState(null);
 
+
+  const handleStartChat = async () => {
+
+  // Create chat logic here
+
+  await sendChatNotification({
+    sellerId: item.sellerId,
+    buyerId: currentUser.uid,
+    itemId: item.id,
+    itemTitle: item.title,
+    buyerName: currentUser.displayName,
+  });
+
+  alert("Chat request sent!");
+};
   useEffect(() => {
     const fetchItem = async () => {
       try {

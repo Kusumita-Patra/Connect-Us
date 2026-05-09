@@ -20,6 +20,7 @@ function Dashboard() {
   const [purchases, setPurchases] = useState([]);
   const [mobileNumber, setmobileNumber] = useState("");
   const [location, setLocation] = useState("");
+  const [address, setAddress] = useState("");
 
   const navigate = useNavigate();
 
@@ -37,7 +38,9 @@ function Dashboard() {
 
           setUsername(userData.username);
           setLocation(userData.location);
+          setAddress(userData.address);
           setmobileNumber(userData.mobileNumber);
+
         }
 
         // Fetch purchased items
@@ -93,6 +96,8 @@ function Dashboard() {
       <p>📧 {email}</p>
 
       <p>🏫 {location}</p>
+      
+      <p>🏠 {address}</p>
 
       <p>📱 {mobileNumber}</p>
 
