@@ -39,7 +39,14 @@ function ItemList() {
           >
             <img src={item.imageUrl} alt="item" style={imageStyle} />
 
-            <div style={{ padding: "10px" }}>
+            <div
+  style={{
+    padding: "10px",
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 1
+  }}
+>
               <h3 style={{ margin: "5px 0" }}>{item.name}</h3>
 
               <p style={priceStyle}>₹{item.price}</p>
@@ -77,7 +84,11 @@ const cardStyle = {
   borderRadius: "12px",
   overflow: "hidden",
   boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-  transition: "transform 0.2s"
+  transition: "transform 0.2s",
+
+  display: "flex",
+  flexDirection: "column",
+  height: "100%"
 };
 
 const imageStyle = {
@@ -94,11 +105,13 @@ const priceStyle = {
 
 const categoryStyle = {
   fontSize: "12px",
-  color: "#888"
+  color: "#888",
+  marginBottom: "10px",
+  flexGrow: 1
 };
 
 const buttonStyle = {
-  marginTop: "10px",
+  marginTop: "auto",
   width: "100%",
   padding: "8px",
   backgroundColor: "#ffa73c",
@@ -108,6 +121,7 @@ const buttonStyle = {
   borderRadius: "6px",
   cursor: "pointer"
 };
+
 const headerBar = {
   width: "100%",
   padding: "20px 0",

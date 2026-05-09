@@ -61,6 +61,7 @@ body {
   display: flex;
   gap: 15px;
   font-size: 14px;
+  cursor: pointer;
 }
 
 /* Hero Section */
@@ -151,7 +152,7 @@ body {
   gap: 10px;
 }
 
-/* Buy button (simple outline style) */
+/* Buy button (simple outline style) 
 .buyBtn {
   background: white;
   border: 1px solid #2c7be5;
@@ -159,25 +160,21 @@ body {
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
-}
+} */
 
-/* Sell button (yellow highlight like Clankart) */
+/* Sell button (yellow highlight like Clankart) 
 .sellBtn {
   background: #facc15;
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
-}
+} */
 
-.buyBtn:hover {
+/* .buyBtn:hover {
   background: #2c7be5;
   color: white;
-}
-
-.sellBtn:hover {
-  background: #eab308;
-}
+} */
 
 .navActions {
   display: flex;
@@ -186,12 +183,18 @@ body {
 
 /* Buy button */
 .buyBtn {
-  background: #e0f2fe;       /* light blue */
-  color: #0369a1;
+  background: #ffedd5;   /* light orange */
+  color: #ea580c;        /* deep orange text */
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.buyBtn:hover {
+  background: #fb923c;   /* stronger orange */
+  color: white;
 }
 
 /* Sell button */
@@ -308,6 +311,7 @@ body {
   flex-direction: column;
   gap: 6px;
   background: white;
+  height: 100%; 
 }
 
 .listingCard img {
@@ -315,6 +319,30 @@ body {
   height: 150px;             /* fixed height */
   object-fit: cover;         /* crops nicely instead of stretching */
   border-radius: 8px;
+}
+
+.listingCard p {
+  flex-grow: 1;   /* fills remaining space */
+
+  /* optional neat text limit */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  color: #555;
+  line-height: 1.4;
+}
+
+/* button */
+.listingCard button {
+  margin-top: auto; /* pushes button to bottom */
+
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
 }
 
 .listingsContainer {
@@ -498,4 +526,31 @@ body {
 .viewAllBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+}
+
+/* FORCE navbar buy button style */
+.navActions .buyBtn {
+  background: linear-gradient(135deg, #f97316, #fb923c) !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.navActions .buyBtn:hover {
+  background: #ea580c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+}
+
+.sellBtn {
+  transition: 0.3s;
+}
+
+.sellBtn:hover {
+  background: #eab308;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
 }
