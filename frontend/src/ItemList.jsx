@@ -58,6 +58,8 @@ function ItemList() {
               >
                 View Details
               </button>
+              
+            
             </div>
           </div>
         ))}
@@ -139,5 +141,7 @@ const headingStyle = {
   letterSpacing: "1px",
   margin: 0
 };
+
+
 
 export default ItemList;

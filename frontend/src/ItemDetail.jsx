@@ -1,66 +1,94 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { db } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
+
+import {
+  useParams,
+  useNavigate,
+} from "react-router-dom";
+
+import { db, auth } from "./firebase";
+
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
 import "./ItemDetail.css";
-import { sendChatNotification } from "./services/notificationService";
+
+
 
 function ItemDetail() {
+
   const { id } = useParams();
+
+  const navigate = useNavigate();
+
   const [item, setItem] = useState(null);
 
 
-  const handleStartChat = async () => {
 
-  // Create chat logic here
+  // FETCH ITEM
 
-  await sendChatNotification({
-    sellerId: item.sellerId,
-    buyerId: currentUser.uid,
-    itemId: item.id,
-    itemTitle: item.title,
-    buyerName: currentUser.displayName,
-  });
-
-  alert("Chat request sent!");
-};
   useEffect(() => {
+
     const fetchItem = async () => {
+
       try {
+
         const docRef = doc(db, "items", id);
+
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setItem(docSnap.data());
+
+          setItem({
+            id: docSnap.id,
+            ...docSnap.data(),
+          });
+
         } else {
+
           console.log("No such item!");
+
         }
+
       } catch (error) {
+
         console.error(error);
+
       }
     };
 
     fetchItem();
+
   }, [id]);
 
   if (!item) return <h2>Loading...</h2>;
 
   return (
+
     <div className="itemDetailContainer">
+
       <div className="itemCard">
-        
-        {/* Image */}
+
+        {/* IMAGE */}
+
         <img
           src={item.imageUrl}
           alt={item.name}
           className="itemImage"
         />
 
-        {/* Details */}
-        <div className="itemDetails">
-          <div className="itemTitle">{item.name}</div>
+        {/* DETAILS */}
 
-          <div className="itemPrice">₹{item.price}</div>
+        <div className="itemDetails">
+
+          <div className="itemTitle">
+            {item.name}
+          </div>
+
+          <div className="itemPrice">
+            ₹{item.price}
+          </div>
 
           <div className="itemCategory">
             Category: {item.category}
@@ -70,19 +98,31 @@ function ItemDetail() {
             {item.description}
           </div>
 
-          {/* Buttons */}
+          {/* BUTTONS */}
+
           <div className="actionButtons">
-            <button className="buyBtn">
-              Buy Now
+
+            <button
+              className="buyBtn"
+              onClick={() =>
+                navigate(`/contact/${id}`)
+              }
+            >
+              Contact Seller
             </button>
 
-            <button className="contactBtn">
+            <button
+              className="contactBtn"
+            >
               Add to Cart
             </button>
+
           </div>
+
         </div>
 
       </div>
+
     </div>
   );
 }

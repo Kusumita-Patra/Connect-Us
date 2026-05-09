@@ -13,20 +13,23 @@ import ItemList from "./ItemList";
 import ItemDetail from "./ItemDetail";
 
 import ProtectedRoute from "./ProtectedRoute";
+
 import { auth } from "./firebase";
 import NotificationBell from "./components/NotificationBell";
+
+import ContactSeller from "./ContactSeller";
 
 import "./theme.css";
 
 function App() {
-
 
   const currentUser = auth.currentUser;
 
   return (
     <Router>
 
-      <NotificationBell currentUser={currentUser} />
+      {/* Notification Bell */}
+      <NotificationBell currentUser={auth.currentUser} />
 
       <Routes>
 
@@ -50,6 +53,9 @@ function App() {
         <Route path="/items" element={<ItemList />} />
 
         <Route path="/item/:id" element={<ItemDetail />} />
+
+        {/* Contact Seller */}
+        <Route path="/contact/:id" element={<ContactSeller />} />
 
         <Route path="/dashboard" element={<Dashboard />} />
 
