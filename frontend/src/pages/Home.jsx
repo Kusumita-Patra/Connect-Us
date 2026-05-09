@@ -59,6 +59,7 @@ const Home = () => {
             <option value="">All</option>
             <option value="Books">Books</option>
             <option value="Electronics">Electronics</option>
+            <option value="Stationery">Stationery</option>
           </select>
 
           <input

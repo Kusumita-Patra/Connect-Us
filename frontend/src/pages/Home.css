@@ -61,6 +61,7 @@ body {
   display: flex;
   gap: 15px;
   font-size: 14px;
+  cursor: pointer;
 }
 
 /* Hero Section */
@@ -308,6 +309,7 @@ body {
   flex-direction: column;
   gap: 6px;
   background: white;
+  height: 100%; 
 }
 
 .listingCard img {
@@ -315,6 +317,30 @@ body {
   height: 150px;             /* fixed height */
   object-fit: cover;         /* crops nicely instead of stretching */
   border-radius: 8px;
+}
+
+.listingCard p {
+  flex-grow: 1;   /* fills remaining space */
+
+  /* optional neat text limit */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  color: #555;
+  line-height: 1.4;
+}
+
+/* button */
+.listingCard button {
+  margin-top: auto; /* pushes button to bottom */
+
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
 }
 
 .listingsContainer {
