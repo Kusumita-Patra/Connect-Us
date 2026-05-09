@@ -1,4 +1,3 @@
-import ContactSeller from "./ContactSeller";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -11,6 +10,7 @@ import SearchResults from "./pages/SearchResults";
 import ItemList from "./ItemList";
 import ItemDetail from "./ItemDetail";
 import ProtectedRoute from "./ProtectedRoute";
+import ContactSeller from "./ContactSeller";
 
 import "./theme.css";
 
