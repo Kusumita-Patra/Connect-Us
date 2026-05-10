@@ -83,3 +83,17 @@
 .contactBtn:hover {
   background: #27eded;
 }
+
+.chatBtn {
+  padding: 10px 20px;
+  background: #ff6b6b;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.chatBtn:hover {
+  background: #27eded;
+}

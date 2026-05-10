@@ -100,10 +100,7 @@ const Home = () => {
           </button>
         </div>
 
-        <button
-          className="viewAllBtn"
-          onClick={() => navigate("/items")}
-        >
+        <button className="viewAllBtn" onClick={() => navigate("/items")}>
           View All Items
         </button>
 
@@ -112,9 +109,7 @@ const Home = () => {
           {user ? (
             <>
               <span>{user.name}</span>
-              <span onClick={() => navigate("/dashboard")}>
-                My Profile
-              </span>
+              <span onClick={() => navigate("/dashboard")}>My Profile</span>
             </>
           ) : (
             <>
@@ -130,23 +125,26 @@ const Home = () => {
         <div className="overlay">
           <h1>Buy and Sell Items Within Campus Easily</h1>
           <p>
-            Find second-hand items or sell unused stuff at the best price
-            within your college.
+            Find second-hand items or sell unused stuff at the best price within
+            your college.
           </p>
 
           <div className="actionCards">
-            <div
-              className="card buy"
-              onClick={() => navigate("/items")}
-            >
-              <img src="https://cdn-icons-png.flaticon.com/512/2331/2331970.png" alt="buy" />
+            <div className="card buy" onClick={() => navigate("/items")}>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/2331/2331970.png"
+                alt="buy"
+              />
               <button>Buy Items</button>
             </div>
 
             <div className="or">OR</div>
 
             <div className="card sell">
-              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" alt="sell" />
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png"
+                alt="sell"
+              />
               <button
                 onClick={() => {
                   if (user) {
@@ -185,6 +183,15 @@ const Home = () => {
                 <p>{item.description}</p>
 
                 <h3>₹{item.price}</h3>
+
+                <div
+                  className={
+                    item.status === "Sold Out" ? "soldStatus" : "stockStatus"
+                  }
+                >
+                  {item.status}
+                </div>
+
                 <p>{item.category}</p>
 
                 <button>Buy Now</button>

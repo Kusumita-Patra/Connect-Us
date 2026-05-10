@@ -19,20 +19,19 @@ import NotificationBell from "./components/NotificationBell";
 
 import ContactSeller from "./ContactSeller";
 
+import ChatPage from "./ChatPage";
+
 import "./theme.css";
 
 function App() {
-
   const currentUser = auth.currentUser;
 
   return (
     <Router>
-
       {/* Notification Bell */}
       <NotificationBell currentUser={auth.currentUser} />
 
       <Routes>
-
         <Route path="/" element={<Home />} />
 
         <Route path="/signup" element={<Signup />} />
@@ -57,10 +56,10 @@ function App() {
         {/* Contact Seller */}
         <Route path="/contact/:id" element={<ContactSeller />} />
 
+        <Route path="/chat/:chatId" element={<ChatPage />} />
+
         <Route path="/dashboard" element={<Dashboard />} />
-
       </Routes>
-
     </Router>
   );
 }

@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { db, auth } from "./firebase";
 
-import {
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
-import { sendChatNotification }
-from "./services/notificationService";
+import { sendChatNotification } from "./services/notificationService";
 
 function ContactSeller() {
-
   const { id } = useParams();
+
+  const navigate = useNavigate();
 
   const [item, setItem] = useState(null);
 
   const [seller, setSeller] = useState(null);
 
   useEffect(() => {
-
     const fetchData = async () => {
-
       try {
-
         // FETCH ITEM
 
         const itemRef = doc(db, "items", id);
@@ -33,7 +27,6 @@ function ContactSeller() {
         const itemSnap = await getDoc(itemRef);
 
         if (itemSnap.exists()) {
-
           const itemData = {
             id: itemSnap.id,
             ...itemSnap.data(),
@@ -43,77 +36,114 @@ function ContactSeller() {
 
           // FETCH SELLER FROM USERS COLLECTION
 
-          const sellerRef = doc(
-            db,
-            "users",
-            itemData.sellerId
-          );
+          const sellerRef = doc(db, "users", itemData.sellerId);
 
-          const sellerSnap =
-            await getDoc(sellerRef);
+          const sellerSnap = await getDoc(sellerRef);
 
           if (sellerSnap.exists()) {
-
             setSeller(sellerSnap.data());
-
           }
         }
-
       } catch (error) {
-
         console.error(error);
-
       }
     };
 
     fetchData();
-
   }, [id]);
 
   // CHAT REQUEST
 
   const handleStartChat = async () => {
 
-    try {
+  try {
 
-      await sendChatNotification({
+    // OPTIONAL NOTIFICATION
 
-        sellerId: item.sellerId,
+    await sendChatNotification({
 
-        buyerId: auth.currentUser.uid,
+      sellerId: item.sellerId,
 
-        itemId: item.id,
+      buyerId:
+        auth.currentUser.uid,
 
-        itemTitle: item.name,
+      itemId: item.id,
 
-        buyerName:
-          auth.currentUser.email || "Someone",
+      itemTitle: item.name,
+
+      buyerName:
+        auth.currentUser.email ||
+        "Someone",
+
+    });
+
+    // CREATE CHAT
+
+    const buyerId =
+      auth.currentUser.uid;
+
+    const sellerId =
+      item.sellerId;
+
+    const itemId =
+      item.id;
+
+    const chatId =
+      buyerId < sellerId
+        ? `${buyerId}_${sellerId}_${itemId}`
+        : `${sellerId}_${buyerId}_${itemId}`;
+
+    const chatRef = doc(
+      db,
+      "chats",
+      chatId
+    );
+
+    const chatSnap =
+      await getDoc(chatRef);
+
+    if (!chatSnap.exists()) {
+
+      await setDoc(chatRef, {
+
+        buyerId,
+
+        sellerId,
+
+        itemId,
+
+        participants: [
+          buyerId,
+          sellerId,
+        ],
+
+        createdAt:
+          serverTimestamp(),
+
+        lastMessage: "",
 
       });
-
-      alert("Chat request sent!");
-
-    } catch (error) {
-
-      console.error(error);
-
     }
-  };
 
+    // OPEN CHAT PAGE
+
+    navigate(`/chat/${chatId}`);
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+};
   // LOADING STATES
 
-  if (!item)
-    return <h2>Loading item...</h2>;
+  if (!item) return <h2>Loading item...</h2>;
 
-  if (!seller && !item.sellerName)
-  return <h2>Seller not found</h2>;
+  if (!seller && !item.sellerName) return <h2>Seller not found</h2>;
 
   return (
-
     <div style={containerStyle}>
-
       <div style={cardStyle}>
-
         <h1>Seller Details</h1>
 
         <p>
@@ -136,15 +166,10 @@ function ContactSeller() {
           {seller?.location || item.sellerLocation}
         </p>
 
-        <button
-          style={chatButtonStyle}
-          onClick={handleStartChat}
-        >
+        <button style={chatButtonStyle} onClick={handleStartChat}>
           Want to Chat?
         </button>
-
       </div>
-
     </div>
   );
 }
@@ -154,7 +179,7 @@ const containerStyle = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  backgroundColor: "#f5f5f5"
+  backgroundColor: "#f5f5f5",
 };
 
 const cardStyle = {
@@ -163,7 +188,7 @@ const cardStyle = {
   borderRadius: "12px",
   boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
   width: "550px",
-  lineHeight: "2"
+  lineHeight: "2",
 };
 
 const chatButtonStyle = {
@@ -176,7 +201,7 @@ const chatButtonStyle = {
   borderRadius: "8px",
   fontSize: "16px",
   fontWeight: "bold",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 export default ContactSeller;
