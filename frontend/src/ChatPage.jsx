@@ -19,7 +19,7 @@ import {
 
 import {
   sendChatNotification,
-} from "./services/notificationService";
+} from "./services/NotificationService";
 
 function ChatPage() {
   const { chatId } = useParams();
