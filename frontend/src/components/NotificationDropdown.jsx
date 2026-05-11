@@ -1,27 +1,48 @@
 import {
   doc,
-  updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 
-const NotificationDropdown = ({ notifications }) => {
+import {
+  useNavigate,
+} from "react-router-dom";
 
-  const markAsRead = async (id) => {
+const NotificationDropdown = ({
+  notifications,
+}) => {
 
-    try {
+  const navigate =
+    useNavigate();
 
-      await updateDoc(
-        doc(db, "notifications", id),
-        {
-          read: true,
-        }
-      );
+  const openNotification =
+    async (notification) => {
 
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      try {
+
+        // DELETE FIRST
+
+        await deleteDoc(
+          doc(
+            db,
+            "notifications",
+            notification.id
+          )
+        );
+
+        // THEN NAVIGATE
+
+        navigate(
+          `/chat/${notification.chatId}`
+        );
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+    };
 
   return (
 
@@ -31,53 +52,53 @@ const NotificationDropdown = ({ notifications }) => {
         background: "white",
         borderRadius: "10px",
         marginTop: "10px",
-        boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+        boxShadow:
+          "0 0 10px rgba(0,0,0,0.2)",
         overflow: "hidden",
       }}
     >
 
-      {
-        notifications.length === 0 ? (
+      {notifications.length === 0 ? (
 
-          <p
-            style={{
-              padding: "15px",
-              textAlign: "center",
-            }}
-          >
-            No notifications
-          </p>
+        <p
+          style={{
+            padding: "15px",
+            textAlign: "center",
+          }}
+        >
+          No notifications
+        </p>
 
-        ) : (
+      ) : (
 
-          notifications.map((notification) => (
+        notifications.map(
+          (notification) => (
 
             <div
               key={notification.id}
-              onClick={() => markAsRead(notification.id)}
+
+              onClick={() =>
+                openNotification(
+                  notification
+                )
+              }
+
               style={{
                 padding: "12px",
-                borderBottom: "1px solid #eee",
+                borderBottom:
+                  "1px solid #eee",
                 cursor: "pointer",
-                backgroundColor: notification.read
-                  ? "white"
-                  : "#e6f0ff",
+                backgroundColor:
+                  "#e6f0ff",
               }}
             >
 
-              <p
-                style={{
-                  margin: 0,
-                }}
-              >
-                {notification.message}
-              </p>
+              {notification.message}
 
             </div>
-
-          ))
+          )
         )
-      }
+      )}
 
     </div>
   );

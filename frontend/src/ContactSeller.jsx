@@ -1,206 +1,354 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 
-import { db, auth } from "./firebase";
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
 
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  db,
+  auth,
+} from "./firebase";
 
-import { sendChatNotification } from "./services/notificationService";
+import {
+  sendChatNotification,
+} from "./services/notificationService";
+
+import {
+  createOrGetChat,
+} from "./services/chatService";
+
 
 function ContactSeller() {
+
   const { id } = useParams();
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const [item, setItem] = useState(null);
+  const [item, setItem] =
+    useState(null);
 
-  const [seller, setSeller] = useState(null);
+  const [seller, setSeller] =
+    useState(null);
+
+  // FETCH ITEM + SELLER
 
   useEffect(() => {
+
     const fetchData = async () => {
+
       try {
-        // FETCH ITEM
 
-        const itemRef = doc(db, "items", id);
+        // ITEM
 
-        const itemSnap = await getDoc(itemRef);
+        const itemRef = doc(
+          db,
+          "items",
+          id
+        );
 
-        if (itemSnap.exists()) {
-          const itemData = {
-            id: itemSnap.id,
-            ...itemSnap.data(),
-          };
+        const itemSnap =
+          await getDoc(itemRef);
 
-          setItem(itemData);
+        if (!itemSnap.exists()) {
 
-          // FETCH SELLER FROM USERS COLLECTION
+          console.log(
+            "Item not found"
+          );
 
-          const sellerRef = doc(db, "users", itemData.sellerId);
+          return;
+        }
 
-          const sellerSnap = await getDoc(sellerRef);
+        const itemData = {
 
-          if (sellerSnap.exists()) {
-            setSeller(sellerSnap.data());
+          id: itemSnap.id,
+
+          ...itemSnap.data(),
+
+        };
+
+        setItem(itemData);
+
+        // SELLER
+
+        if (itemData.sellerId) {
+
+          const sellerRef = doc(
+            db,
+            "users",
+            itemData.sellerId
+          );
+
+          const sellerSnap =
+            await getDoc(
+              sellerRef
+            );
+
+          if (
+            sellerSnap.exists()
+          ) {
+
+            setSeller(
+              sellerSnap.data()
+            );
           }
         }
+
       } catch (error) {
+
         console.error(error);
+
       }
     };
 
     fetchData();
+
   }, [id]);
 
-  // CHAT REQUEST
+  // START CHAT
 
-  const handleStartChat = async () => {
+  const handleStartChat =
+    async () => {
 
-  try {
+      try {
 
-    // OPTIONAL NOTIFICATION
+        const buyerId =
+          auth.currentUser.uid;
 
-    await sendChatNotification({
+        const sellerId =
+          item.sellerId;
 
-      sellerId: item.sellerId,
+        // GET BUYER DETAILS
 
-      buyerId:
-        auth.currentUser.uid,
+        const buyerRef = doc(
+          db,
+          "users",
+          buyerId
+        );
 
-      itemId: item.id,
+        const buyerSnap =
+          await getDoc(
+            buyerRef
+          );
 
-      itemTitle: item.name,
+        const buyerData =
+          buyerSnap.data();
 
-      buyerName:
-        auth.currentUser.email ||
-        "Someone",
+        console.log(
+          "BUYER USERNAME:",
+          buyerData?.username
+        );
 
-    });
+        // CREATE OR GET CHAT
 
-    // CREATE CHAT
+        const chatId =
+          await createOrGetChat({
 
-    const buyerId =
-      auth.currentUser.uid;
+            buyerId,
 
-    const sellerId =
-      item.sellerId;
+            sellerId,
 
-    const itemId =
-      item.id;
+            itemId:
+              item.id,
 
-    const chatId =
-      buyerId < sellerId
-        ? `${buyerId}_${sellerId}_${itemId}`
-        : `${sellerId}_${buyerId}_${itemId}`;
+            itemName:
+              item.name,
+          });
 
-    const chatRef = doc(
-      db,
-      "chats",
-      chatId
-    );
+        // SEND NOTIFICATION
 
-    const chatSnap =
-      await getDoc(chatRef);
+        await sendChatNotification({
 
-    if (!chatSnap.exists()) {
-
-      await setDoc(chatRef, {
-
-        buyerId,
-
-        sellerId,
-
-        itemId,
-
-        participants: [
-          buyerId,
           sellerId,
-        ],
 
-        createdAt:
-          serverTimestamp(),
+          buyerId,
 
-        lastMessage: "",
+          itemId:
+            item.id,
 
-      });
-    }
+          itemTitle:
+            item.name,
 
-    // OPEN CHAT PAGE
+          buyerName:
+            buyerData?.username ||
+            "Someone",
 
-    navigate(`/chat/${chatId}`);
+          chatId,
+        });
 
-  } catch (error) {
+        // OPEN CHAT
 
-    console.error(error);
+        navigate(
+          `/chat/${chatId}`
+        );
 
+      } catch (error) {
+
+        console.error(error);
+
+      }
+    };
+  // LOADING
+
+  if (!item)
+    return <h2>Loading...</h2>;
+
+  if (
+    !seller &&
+    !item.sellerName
+  ) {
+
+    return (
+      <h2>
+        Seller not found
+      </h2>
+    );
   }
-};
-  // LOADING STATES
-
-  if (!item) return <h2>Loading item...</h2>;
-
-  if (!seller && !item.sellerName) return <h2>Seller not found</h2>;
 
   return (
+
     <div style={containerStyle}>
+
       <div style={cardStyle}>
-        <h1>Seller Details</h1>
+
+        <h1>
+          Seller Details
+        </h1>
 
         <p>
-          <strong>Name:</strong>
-          {seller?.username || item.sellerName}
+
+          <strong>
+            Name:
+          </strong>
+
+          {" "}
+
+          {seller?.username ||
+            item.sellerName}
+
         </p>
 
         <p>
-          <strong>Phone:</strong>
-          {seller?.mobileNumber || item.sellerPhone}
+
+          <strong>
+            Phone:
+          </strong>
+
+          {" "}
+
+          {seller?.mobileNumber ||
+            item.sellerPhone}
+
         </p>
 
         <p>
-          <strong>Email:</strong>
-          {seller?.email || item.sellerEmail}
+
+          <strong>
+            Email:
+          </strong>
+
+          {" "}
+
+          {seller?.email ||
+            item.sellerEmail}
+
         </p>
 
         <p>
-          <strong>Location:</strong>
-          {seller?.location || item.sellerLocation}
+
+          <strong>
+            Location:
+          </strong>
+
+          {" "}
+
+          {seller?.location ||
+            item.sellerLocation}
+
         </p>
 
-        <button style={chatButtonStyle} onClick={handleStartChat}>
+        <button
+          style={
+            chatButtonStyle
+          }
+          onClick={
+            handleStartChat
+          }
+        >
+
           Want to Chat?
+
         </button>
+
       </div>
+
     </div>
   );
 }
 
 const containerStyle = {
+
   minHeight: "100vh",
+
   display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "#f5f5f5",
+
+  justifyContent:
+    "center",
+
+  alignItems:
+    "center",
+
+  backgroundColor:
+    "#f5f5f5",
 };
 
 const cardStyle = {
-  backgroundColor: "#fff",
+
+  backgroundColor:
+    "#fff",
+
   padding: "30px",
+
   borderRadius: "12px",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+
+  boxShadow:
+    "0 4px 10px rgba(0,0,0,0.1)",
+
   width: "550px",
+
   lineHeight: "2",
 };
 
 const chatButtonStyle = {
+
   marginTop: "20px",
+
   width: "100%",
+
   padding: "12px",
-  backgroundColor: "#6D69D3",
+
+  backgroundColor:
+    "#6D69D3",
+
   color: "#fff",
+
   border: "none",
+
   borderRadius: "8px",
+
   fontSize: "16px",
+
   fontWeight: "bold",
+
   cursor: "pointer",
 };
 

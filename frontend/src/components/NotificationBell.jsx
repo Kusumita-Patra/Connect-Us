@@ -16,29 +16,67 @@ const NotificationBell = ({ currentUser }) => {
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
 
-    if (!currentUser) return;
+  if (!currentUser) return;
 
-    const q = query(
-      collection(db, "notifications"),
-      where("sellerId", "==", currentUser.uid),
-      orderBy("createdAt", "desc")
+  console.log(
+    "CURRENT USER:",
+    currentUser
+  );
+
+  const q = query(
+
+    collection(
+      db,
+      "notifications"
+    ),
+
+    where(
+      "sellerId",
+      "==",
+      currentUser.uid
+    ),
+
+    orderBy(
+      "createdAt",
+      "desc"
+    )
+  );
+
+  const unsubscribe =
+    onSnapshot(
+
+      q,
+
+      (snapshot) => {
+
+        const data =
+          snapshot.docs.map(
+            (doc) => ({
+
+              id: doc.id,
+
+              ...doc.data(),
+
+            })
+          );
+
+        console.log(
+          "NOTIFICATIONS:",
+          data
+        );
+
+        setNotifications(
+          data
+        );
+      }
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+  return () =>
+    unsubscribe();
 
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setNotifications(data);
-    });
-
-    return () => unsubscribe();
-
-  }, [currentUser]);
+}, [currentUser]);
 
   const unreadCount = notifications.filter(
     (n) => !n.read
