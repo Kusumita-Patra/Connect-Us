@@ -20,7 +20,7 @@ import {
 
 import {
   sendChatNotification,
-} from "./services/notificationService";
+} from "./services/NotificationService";
 
 import {
   createOrGetChat,
