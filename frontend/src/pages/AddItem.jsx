@@ -39,6 +39,7 @@ const AddItem = () => {
   // IMAGE
 
   const [image, setImage] = useState(null);
+  const [aiAnalysis, setAiAnalysis] = useState(null);
 
   // FETCH CURRENT USER DATA
 
@@ -141,7 +142,51 @@ const AddItem = () => {
         }
       );
 
+
       const data = await res.json();
+      // SEND IMAGE TO AI BACKEND
+
+      const aiFormData = new FormData();
+
+      aiFormData.append("file", image);
+
+      const aiResponse = await fetch(
+        "http://127.0.0.1:8000/predict",
+        {
+          method: "POST",
+          body: aiFormData,
+        }
+      );
+
+      const aiData = await aiResponse.json();
+      let suggestedCategory = item.category;
+
+      if (aiData.detections.length > 0) {
+
+        const detectedClass =
+          aiData.detections[0].class;
+
+        if (
+          ["laptop", "keyboard", "mouse", "cell phone"]
+            .includes(detectedClass)
+        ) {
+
+          suggestedCategory = "Electronics";
+
+        }
+
+        else if (
+          ["book"].includes(detectedClass)
+        ) {
+
+          suggestedCategory = "Books";
+
+        }
+      }
+
+      console.log("AI Detection:", aiData);
+
+      setAiAnalysis(aiData);
 
       // SAVE ITEM
 
@@ -150,9 +195,13 @@ const AddItem = () => {
         {
 
           ...item,
+          category: suggestedCategory,
 
           imageUrl:
             data.secure_url,
+
+          aiDetections:
+            aiData.detections,
 
           createdAt:
             new Date(),
@@ -299,6 +348,23 @@ const AddItem = () => {
 
             </div>
 
+          )}
+          {aiAnalysis && (
+            <div>
+
+              <h4>AI Detection</h4>
+
+              {aiAnalysis.detections.map(
+                (item, index) => (
+                  <p key={index}>
+                    {item.class} (
+                    {(item.confidence * 100).toFixed(1)}
+                    %)
+                  </p>
+                )
+              )}
+
+            </div>
           )}
 
           <button

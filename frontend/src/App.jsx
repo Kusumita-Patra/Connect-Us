@@ -13,6 +13,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
+import MyChats from "./pages/MyChats";
 import { auth } from "./firebase";
 
 import Signup from "./Signup";
@@ -144,6 +145,10 @@ function App() {
         <Route
           path="/dashboard"
           element={<Dashboard />}
+        />
+        <Route
+          path="/my-chats"
+          element={<MyChats />}
         />
 
       </Routes>

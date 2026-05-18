@@ -1,8 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { auth } from "./firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import { db } from "./firebase";
+import React, {
+  useEffect,
+  useState,
+} from "react";
+
+import { auth, db }
+from "./firebase";
+
+import {
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
 import {
   doc,
   getDoc,
@@ -10,148 +22,475 @@ import {
   query,
   where,
   getDocs,
+  orderBy,
+  onSnapshot,
 } from "firebase/firestore";
 
 import "./Dashboard.css";
 
 function Dashboard() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [purchases, setPurchases] = useState([]);
-  const [mobileNumber, setmobileNumber] = useState("");
-  const [location, setLocation] = useState("");
-  const [address, setAddress] = useState("");
 
-  const navigate = useNavigate();
+  const [username, setUsername] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
+
+  const [purchases, setPurchases] =
+    useState([]);
+
+  const [mobileNumber,
+    setmobileNumber] =
+    useState("");
+
+  const [location, setLocation] =
+    useState("");
+
+  const [address, setAddress] =
+    useState("");
+
+  const [myChats, setMyChats] =
+    useState([]);
+
+  const navigate =
+    useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setEmail(currentUser.email);
 
-        // Fetch user profile
-        const userRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(userRef);
+    const unsubscribe =
+      onAuthStateChanged(
 
-        if (docSnap.exists())  {
-          const userData = docSnap.data();
+        auth,
 
-          setUsername(userData.username);
-          setLocation(userData.location);
-          setAddress(userData.address);
-          setmobileNumber(userData.mobileNumber);
+        async (
+          currentUser
+        ) => {
 
+          if (!currentUser) {
+
+            navigate(
+              "/login"
+            );
+
+            return;
+          }
+
+          // EMAIL
+
+          setEmail(
+            currentUser.email
+          );
+
+          // USER PROFILE
+
+          try {
+
+            const userRef =
+              doc(
+                db,
+                "users",
+                currentUser.uid
+              );
+
+            const docSnap =
+              await getDoc(
+                userRef
+              );
+
+            if (
+              docSnap.exists()
+            ) {
+
+              const userData =
+                docSnap.data();
+
+              setUsername(
+                userData.username
+              );
+
+              setLocation(
+                userData.location
+              );
+
+              setAddress(
+                userData.address
+              );
+
+              setmobileNumber(
+                userData.mobileNumber
+              );
+            }
+
+          } catch (error) {
+
+            console.error(
+              error
+            );
+          }
+
+          // PURCHASES
+
+          try {
+
+            const purchasesRef =
+              collection(
+                db,
+                "purchases"
+              );
+
+            const purchasesQuery =
+              query(
+
+                purchasesRef,
+
+                where(
+                  "buyerId",
+                  "==",
+                  currentUser.uid
+                )
+              );
+
+            const querySnapshot =
+              await getDocs(
+                purchasesQuery
+              );
+
+            const purchasedItems =
+              querySnapshot.docs.map(
+                (doc) => ({
+
+                  id: doc.id,
+
+                  ...doc.data(),
+                })
+              );
+
+            setPurchases(
+              purchasedItems
+            );
+
+          } catch (error) {
+
+            console.error(
+              error
+            );
+          }
+
+          // CHATS
+
+          const chatsQuery =
+            query(
+
+              collection(
+                db,
+                "chats"
+              ),
+
+              where(
+                "participants",
+                "array-contains",
+                currentUser.uid
+              ),
+
+              orderBy(
+                "lastMessageTime",
+                "desc"
+              )
+            );
+
+          const unsubscribeChats =
+            onSnapshot(
+
+              chatsQuery,
+
+              (
+                snapshot
+              ) => {
+
+                const chats =
+                  snapshot.docs.map(
+                    (
+                      doc
+                    ) => ({
+
+                      id: doc.id,
+
+                      ...doc.data(),
+                    })
+                  );
+
+                setMyChats(
+                  chats
+                );
+              },
+
+              (error) => {
+
+                console.error(
+                  error
+                );
+              }
+            );
+
+          return () =>
+            unsubscribeChats();
         }
+      );
 
-        // Fetch purchased items
-        const purchasesRef = collection(db, "purchases");
+    return () =>
+      unsubscribe();
 
-        const q = query(
-          purchasesRef,
-          where("buyerId", "==", currentUser.uid)
-        );
-
-        const querySnapshot = await getDocs(q);
-
-        const purchasedItems = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setPurchases(purchasedItems);
-
-      } else {
-        navigate("/login");
-      }
-    });
-
-    return () => unsubscribe();
   }, [navigate]);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // LOGOUT
+
+  const handleLogout =
+    async () => {
+
+      try {
+
+        await signOut(auth);
+
+        navigate("/");
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+      }
+    };
 
   return (
-   <div className="dashboardContainer">
 
-  {/* Profile */}
- <div className="profileCard">
+    <div className="dashboardContainer">
 
-  <div className="profileLeft">
+      {/* PROFILE */}
 
-    <div className="profileAvatar">
-      {username?.charAt(0)}
-    </div>
+      <div className="profileCard">
 
-    <div className="profileInfo">
+        <div className="profileLeft">
 
-      <h2>{username}</h2>
+          <div className="profileAvatar">
 
-      <p>📧 {email}</p>
+            {
+              username?.charAt(
+                0
+              )
+            }
 
-      <p>🏫 {location}</p>
-      
-      <p>🏠 {address}</p>
+          </div>
 
-      <p>📱 {mobileNumber}</p>
+          <div className="profileInfo">
 
-    </div>
+            <h2>
+              {username}
+            </h2>
 
-  </div>
+            <p>
+              📧 {email}
+            </p>
 
-    <button className="logoutBtn" onClick={handleLogout}>
-      Logout
-    </button>
+            <p>
+              🏫 {location}
+            </p>
 
-  </div>
+            <p>
+              🏠 {address}
+            </p>
 
-  {/* Purchases */}
-  <div className="purchaseSection">
+            <p>
+              📱 {mobileNumber}
+            </p>
 
-    <h2>My Purchases</h2>
+          </div>
 
-    {purchases.length === 0 ? (
-      <div className="emptyPurchases">
-        <h3>No purchases yet</h3>
-        <p>Items you buy will appear here.</p>
+        </div>
+
+        <button
+          className="logoutBtn"
+          onClick={
+            handleLogout
+          }
+        >
+
+          Logout
+
+        </button>
+
       </div>
-    ) : (
-      <div className="purchaseGrid">
 
-        {purchases.map((item) => (
-          <div className="purchaseCard" key={item.id}>
+      {/* PURCHASES */}
 
-            <img src={item.imageUrl} alt={item.name} />
+      <div className="purchaseSection">
 
-            <div className="purchaseContent">
+        <h2>
+          My Purchases
+        </h2>
 
-              <h3>{item.name}</h3>
+        {
+          purchases.length === 0 ? (
 
-              <div className="purchasePrice">
-                ₹{item.price}
-              </div>
+            <div className="emptyPurchases">
 
-              <div className="purchaseCategory">
-                {item.category}
-              </div>
+              <h3>
+                No purchases yet
+              </h3>
+
+              <p>
+                Items you buy
+                will appear here.
+              </p>
 
             </div>
 
-          </div>
-        ))}
+          ) : (
+
+            <div className="purchaseGrid">
+
+              {
+                purchases.map(
+                  (item) => (
+
+                    <div
+                      className="purchaseCard"
+                      key={item.id}
+                    >
+
+                      <img
+                        src={
+                          item.imageUrl
+                        }
+
+                        alt={
+                          item.name
+                        }
+                      />
+
+                      <div className="purchaseContent">
+
+                        <h3>
+                          {item.name}
+                        </h3>
+
+                        <div className="purchasePrice">
+
+                          ₹{item.price}
+
+                        </div>
+
+                        <div className="purchaseCategory">
+
+                          {
+                            item.category
+                          }
+
+                        </div>
+
+                      </div>
+
+                    </div>
+                  )
+                )
+              }
+
+            </div>
+          )
+        }
 
       </div>
-    )}
 
-  </div>
+      {/* MY CHATS */}
 
-</div>
+      <div className="purchaseSection">
+
+        <h2>
+          My Chats
+        </h2>
+
+        {
+          myChats.filter(
+            (chat) =>
+              chat.itemName ||
+              chat.lastMessage
+          ).length === 0 ? (
+
+            <div className="emptyPurchases">
+
+              <h3>
+                No chats yet
+              </h3>
+
+            </div>
+
+          ) : (
+
+            <div className="purchaseGrid">
+
+              {
+                myChats
+
+                  .filter(
+                    (chat) =>
+                      chat.itemName ||
+                      chat.lastMessage
+                  )
+
+                  .map(
+                    (chat) => (
+
+                      <div
+
+                        key={chat.id}
+
+                        className="purchaseCard"
+
+                        onClick={() =>
+                          navigate(
+                            `/chat/${chat.id}`
+                          )
+                        }
+
+                        style={{
+                          cursor:
+                            "pointer",
+                        }}
+                      >
+
+                        <div className="purchaseContent">
+
+                          <h3>
+
+                            {
+                              chat.itemName ||
+                              "Chat"
+                            }
+
+                          </h3>
+
+                          <p>
+
+                            {
+                              chat.lastMessage ||
+                              "No messages yet"
+                            }
+
+                          </p>
+
+                        </div>
+
+                      </div>
+                    )
+                  )
+              }
+
+            </div>
+          )
+        }
+
+      </div>
+
+    </div>
   );
 }
 

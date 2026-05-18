@@ -26,6 +26,14 @@ function ItemDetail() {
       console.log("item:", item);
 
       const sellerId = item.sellerId;
+      if (buyerId === sellerId) {
+
+        alert(
+          "You cannot chat with yourself"
+        );
+
+        return;
+      }
 
       console.log("sellerId:", sellerId);
 

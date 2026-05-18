@@ -10,12 +10,14 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-
-import { db, auth } from "./firebase";
 import {
   doc,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
+
+import { db, auth } from "./firebase";
+
 
 import {
   sendChatNotification,
@@ -107,6 +109,15 @@ function ChatPage() {
             serverTimestamp(),
         }
       );
+      // UPDATE LAST MESSAGE
+
+      await updateDoc(
+        doc(db, "chats", chatId),
+        {
+          lastMessage: newMessage,
+          lastMessageTime: serverTimestamp(),
+        }
+      );
 
       // GET CURRENT USER DETAILS
 
@@ -123,7 +134,7 @@ function ChatPage() {
         userSnap.data();
 
       // SEND NOTIFICATION
-            // GET ITEM DETAILS
+      // GET ITEM DETAILS
 
       const itemRef = doc(
         db,
