@@ -4,7 +4,16 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { db, auth } from "./firebase";
 
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 
 import "./ItemDetail.css";
 
@@ -14,6 +23,16 @@ function ItemDetail() {
   const navigate = useNavigate();
 
   const [item, setItem] = useState(null);
+
+  const [rating, setRating] = useState(0);
+
+  const [review, setReview] = useState("");
+
+  const [sellerFeedback, setSellerFeedback] = useState("");
+
+  const [reviews, setReviews] = useState([]);
+
+  const [currentUsername, setCurrentUsername] = useState("");
 
   const handleChat = async () => {
     try {
@@ -27,10 +46,7 @@ function ItemDetail() {
 
       const sellerId = item.sellerId;
       if (buyerId === sellerId) {
-
-        alert(
-          "You cannot chat with yourself"
-        );
+        alert("You cannot chat with yourself");
 
         return;
       }
@@ -74,6 +90,47 @@ function ItemDetail() {
     }
   };
 
+  const submitReview = async () => {
+    try {
+      await addDoc(
+        collection(db, "items", item.id, "reviews"),
+
+        {
+          rating,
+
+          review,
+
+          sellerFeedback,
+
+          reviewerId: auth.currentUser.uid,
+
+          reviewerName: currentUsername,
+
+          createdAt: new Date(),
+        },
+      );
+
+      alert("Review added!");
+
+      setReview("");
+
+      setSellerFeedback("");
+
+      setRating(5);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteReview = async (reviewId) => {
+    try {
+      await deleteDoc(doc(db, "items", item.id, "reviews", reviewId));
+
+      setReviews(reviews.filter((r) => r.id !== reviewId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // FETCH ITEM
 
   useEffect(() => {
@@ -88,6 +145,30 @@ function ItemDetail() {
             id: docSnap.id,
             ...docSnap.data(),
           });
+
+          // FETCH REVIEWS
+
+          const reviewsRef = collection(db, "items", id, "reviews");
+
+          const reviewSnap = await getDocs(reviewsRef);
+
+          const reviewList = reviewSnap.docs.map((doc) => ({
+            id: doc.id,
+
+            ...doc.data(),
+          }));
+
+          setReviews(reviewList);
+
+          // FETCH CURRENT USERNAME
+
+          const userRef = doc(db, "users", auth.currentUser.uid);
+
+          const userSnap = await getDoc(userRef);
+
+          if (userSnap.exists()) {
+            setCurrentUsername(userSnap.data().username);
+          }
         } else {
           console.log("No such item!");
         }
@@ -138,10 +219,86 @@ function ItemDetail() {
             </button>
 
             <button className="contactBtn">Add to Cart</button>
+          </div>
 
-            <button className="chatBtn" onClick={handleChat}>
-              Chat with Seller
-            </button>
+          {/* REVIEW SECTION */}
+
+          <div className="reviewSection">
+            <h3>Rate this Item</h3>
+
+            <div className="starRating">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className={star <= rating ? "star activeStar" : "star"}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+
+            <textarea
+              placeholder="Write review..."
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            />
+
+            <textarea
+  placeholder=
+    "Feedback about seller..."
+  value={sellerFeedback}
+  onChange={(e) =>
+    setSellerFeedback(
+      e.target.value
+    )
+  }
+/>
+
+            <button onClick={submitReview}>Submit Review</button>
+          </div>
+
+          {/* ALL REVIEWS */}
+
+          <div className="allReviews">
+            <h3>Reviews</h3>
+
+            {reviews.map((r) => (
+              <div key={r.id} className="reviewCard">
+                <strong>{r.reviewerName}</strong>
+
+                <div className="reviewRating">⭐ {r.rating}/5</div>
+
+                <p className="reviewText">{r.review}</p>
+
+                {r.sellerFeedback && (
+
+  <div className="sellerFeedback">
+
+    <strong>
+      Feedback on Seller:
+    </strong>
+
+    <p>
+      {r.sellerFeedback}
+    </p>
+
+  </div>
+
+)}
+
+                {/* SHOW ONLY FOR OWNER */}
+
+                {r.reviewerId === auth.currentUser.uid && (
+                  <button
+                    className="deleteReviewBtn"
+                    onClick={() => deleteReview(r.id)}
+                  >
+                    Delete Review
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
