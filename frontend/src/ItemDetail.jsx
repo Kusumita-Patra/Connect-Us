@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 
-import { db, auth } from "./firebase";
+import {
+  db,
+  auth,
+} from "./firebase";
 
 import {
   doc,
@@ -18,9 +27,11 @@ import {
 import "./ItemDetail.css";
 
 function ItemDetail() {
+
   const { id } = useParams();
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [item, setItem] = useState(null);
 
@@ -89,6 +100,8 @@ function ItemDetail() {
       console.error(error);
     }
   };
+  const [item, setItem] =
+    useState(null);
 
   const submitReview = async () => {
     try {
@@ -134,11 +147,9 @@ function ItemDetail() {
   // FETCH ITEM
 
   useEffect(() => {
-    const fetchItem = async () => {
-      try {
-        const docRef = doc(db, "items", id);
 
-        const docSnap = await getDoc(docRef);
+    const fetchItem =
+      async () => {
 
         if (docSnap.exists()) {
           setItem({
@@ -171,51 +182,179 @@ function ItemDetail() {
           }
         } else {
           console.log("No such item!");
+        try {
+
+          const docRef =
+            doc(
+              db,
+              "items",
+              id
+            );
+
+          const docSnap =
+            await getDoc(
+              docRef
+            );
+
+          if (
+            docSnap.exists()
+          ) {
+
+            setItem({
+              id: docSnap.id,
+              ...docSnap.data(),
+            });
+
+          } else {
+
+            console.log(
+              "No such item!"
+            );
+          }
+
+        } catch (error) {
+
+          console.error(error);
         }
+      };
+
+    fetchItem();
+
+  }, [id]);
+
+  // ADD TO CART
+
+  const handleAddToCart =
+    async () => {
+
+      try {
+
+        const currentUser =
+          auth.currentUser;
+
+        if (!currentUser) {
+
+          navigate("/login");
+
+          return;
+        }
+
+        const cartRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "cart",
+          item.id
+        );
+
+        await setDoc(cartRef, {
+
+          itemId: item.id,
+
+          name: item.name,
+
+          price: item.price,
+
+          imageUrl:
+            item.imageUrl,
+
+          category:
+            item.category,
+
+          sellerId:
+            item.sellerId,
+
+          createdAt:
+            serverTimestamp(),
+        });
+
+        alert(
+          "Added to cart"
+        );
+
       } catch (error) {
+
         console.error(error);
       }
     };
 
-    fetchItem();
-  }, [id]);
+  // LOADING
 
-  if (!item) return <h2>Loading...</h2>;
+  if (!item)
+    return <h2>Loading...</h2>;
 
   return (
+
     <div className="itemDetailContainer">
+
       <div className="itemCard">
+
         {/* IMAGE */}
 
-        <img src={item.imageUrl} alt={item.name} className="itemImage" />
+        <img
+          src={item.imageUrl}
+          alt={item.name}
+          className="itemImage"
+        />
 
         {/* DETAILS */}
 
         <div className="itemDetails">
-          <div className="itemTitle">{item.name}</div>
 
-          <div className="itemPrice">₹{item.price}</div>
+          <div className="itemTitle">
+
+            {item.name}
+
+          </div>
+
+          <div className="itemPrice">
+
+            ₹{item.price}
+
+          </div>
 
           <div
             className={
-              item.status === "Sold Out" ? "soldStatus" : "stockStatus"
+              item.status ===
+              "Sold Out"
+                ? "soldStatus"
+                : "stockStatus"
             }
           >
+
             {item.status}
+
           </div>
 
-          <div className="itemCategory">Category: {item.category}</div>
+          <div className="itemCategory">
 
-          <div className="itemDesc">{item.description}</div>
+            Category:
+            {" "}
+            {item.category}
+
+          </div>
+
+          <div className="itemDesc">
+
+            {item.description}
+
+          </div>
 
           {/* BUTTONS */}
 
           <div className="actionButtons">
+
             <button
               className="buyBtn"
-              onClick={() => navigate(`/contact/${id}`)}
+              onClick={() =>
+                navigate(
+                  `/contact/${id}`
+                )
+              }
             >
+
               Contact Seller
+
             </button>
 
             <button className="contactBtn">Add to Cart</button>
@@ -299,9 +438,23 @@ function ItemDetail() {
                 )}
               </div>
             ))}
+            <button
+              className="contactBtn"
+              onClick={
+                handleAddToCart
+              }
+            >
+
+              Add to Cart
+
+            </button>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 }

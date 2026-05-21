@@ -4,7 +4,7 @@ import React, {
 } from "react";
 
 import { auth, db }
-from "./firebase";
+  from "./firebase";
 
 import {
   signOut,
@@ -24,6 +24,7 @@ import {
   getDocs,
   orderBy,
   onSnapshot,
+  deleteDoc,
 } from "firebase/firestore";
 
 import "./Dashboard.css";
@@ -50,6 +51,9 @@ function Dashboard() {
     useState("");
 
   const [myChats, setMyChats] =
+    useState([]);
+
+  const [cartItems, setCartItems] =
     useState([]);
 
   const navigate =
@@ -176,7 +180,40 @@ function Dashboard() {
             );
           }
 
-          // CHATS
+          // REALTIME CART
+
+          const cartRef =
+            collection(
+              db,
+              "users",
+              currentUser.uid,
+              "cart"
+            );
+
+          const unsubscribeCart =
+            onSnapshot(
+
+              cartRef,
+
+              (snapshot) => {
+
+                const cartData =
+                  snapshot.docs.map(
+                    (doc) => ({
+
+                      id: doc.id,
+
+                      ...doc.data(),
+                    })
+                  );
+
+                setCartItems(
+                  cartData
+                );
+              }
+            );
+
+          // REALTIME CHATS
 
           const chatsQuery =
             query(
@@ -190,11 +227,6 @@ function Dashboard() {
                 "participants",
                 "array-contains",
                 currentUser.uid
-              ),
-
-              orderBy(
-                "lastMessageTime",
-                "desc"
               )
             );
 
@@ -232,8 +264,12 @@ function Dashboard() {
               }
             );
 
-          return () =>
+          return () => {
+
             unsubscribeChats();
+
+            unsubscribeCart();
+          };
         }
       );
 
@@ -241,6 +277,30 @@ function Dashboard() {
       unsubscribe();
 
   }, [navigate]);
+
+  // REMOVE CART ITEM
+
+  const removeFromCart =
+    async (itemId) => {
+
+      try {
+
+        await deleteDoc(
+
+          doc(
+            db,
+            "users",
+            auth.currentUser.uid,
+            "cart",
+            itemId
+          )
+        );
+
+      } catch (error) {
+
+        console.error(error);
+      }
+    };
 
   // LOGOUT
 
@@ -317,6 +377,99 @@ function Dashboard() {
           Logout
 
         </button>
+
+      </div>
+      {/* MY CART */}
+
+      {/* MY CART */}
+
+      <div className="cartSection">
+
+        <h2>
+          My Cart
+        </h2>
+
+        {
+          cartItems.length === 0 ? (
+
+            <div className="emptyPurchases">
+
+              <h3>
+                Cart is empty
+              </h3>
+
+            </div>
+
+          ) : (
+
+            <div className="cartGrid">
+
+              {
+                cartItems.map((item) => (
+
+                  <div
+                    className="cartCard"
+                    key={item.id}
+
+                    onClick={() =>
+                      navigate(
+                        `/item/${item.itemId}`
+                      )
+                    }
+
+                    style={{
+                      cursor: "pointer",
+                    }}
+                  >
+
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                    />
+
+                    <div className="cartContent">
+
+                      <h3>
+                        {item.name}
+                      </h3>
+
+                      <div className="cartPrice">
+
+                        ₹{item.price}
+
+                      </div>
+
+                      <div className="cartCategory">
+
+                        {item.category}
+
+                      </div>
+
+                      <button
+
+                        className="removeCartBtn"
+
+                        onClick={(e) => {
+
+                          e.stopPropagation();
+
+                          removeFromCart(item.id);
+                        }}
+                      >
+
+                        Remove
+
+                      </button>
+
+                    </div>
+
+                  </div>
+                ))
+              }
+
+            </div>
+          )
+        }
 
       </div>
 
@@ -399,6 +552,8 @@ function Dashboard() {
         }
 
       </div>
+
+
 
       {/* MY CHATS */}
 
