@@ -11,6 +11,7 @@ import { db, auth } from "../firebase";
 
 import { useNavigate } from "react-router-dom";
 
+
 import "./AddItem.css";
 
 const AddItem = () => {
@@ -40,6 +41,7 @@ const AddItem = () => {
 
   const [image, setImage] = useState(null);
   const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // FETCH CURRENT USER DATA
 
@@ -115,12 +117,20 @@ const AddItem = () => {
 
     try {
 
+      if (!acceptedTerms) {
+
+        alert(
+          "Please accept Terms & Conditions"
+        );
+
+        return;
+      }
+
       if (!sellerData) {
 
         alert("Seller data not found");
 
         return;
-
       }
 
       // CLOUDINARY UPLOAD
@@ -142,9 +152,9 @@ const AddItem = () => {
         }
       );
 
-
       const data = await res.json();
-      // SEND IMAGE TO AI BACKEND
+
+      // AI DETECTION
 
       const aiFormData = new FormData();
 
@@ -159,32 +169,40 @@ const AddItem = () => {
       );
 
       const aiData = await aiResponse.json();
-      let suggestedCategory = item.category;
 
-      if (aiData.detections.length > 0) {
+      let suggestedCategory =
+        item.category;
+
+      if (
+        aiData.detections.length > 0
+      ) {
 
         const detectedClass =
           aiData.detections[0].class;
 
         if (
-          ["laptop", "keyboard", "mouse", "cell phone"]
-            .includes(detectedClass)
+          [
+            "laptop",
+            "keyboard",
+            "mouse",
+            "cell phone",
+          ].includes(detectedClass)
         ) {
 
-          suggestedCategory = "Electronics";
-
+          suggestedCategory =
+            "Electronics";
         }
 
         else if (
-          ["book"].includes(detectedClass)
+          ["book"].includes(
+            detectedClass
+          )
         ) {
 
-          suggestedCategory = "Books";
-
+          suggestedCategory =
+            "Books";
         }
       }
-
-      console.log("AI Detection:", aiData);
 
       setAiAnalysis(aiData);
 
@@ -195,7 +213,9 @@ const AddItem = () => {
         {
 
           ...item,
-          category: suggestedCategory,
+
+          category:
+            suggestedCategory,
 
           imageUrl:
             data.secure_url,
@@ -208,6 +228,15 @@ const AddItem = () => {
 
           status:
             "In Stock",
+
+          acceptedTerms:
+            true,
+
+          sellerWarnings:
+            0,
+
+          reviewFreeze:
+            false,
 
           // SELLER INFO
 
@@ -225,7 +254,6 @@ const AddItem = () => {
 
           sellerLocation:
             sellerData.location,
-
         }
       );
 
@@ -244,12 +272,11 @@ const AddItem = () => {
         price: "",
 
         category: "",
-
       });
 
       setImage(null);
 
-      // REDIRECT
+      setAcceptedTerms(false);
 
       navigate("/");
 
@@ -258,7 +285,6 @@ const AddItem = () => {
       console.error(error);
 
       alert(error.message);
-
     }
   };
 
@@ -350,7 +376,7 @@ const AddItem = () => {
 
           )}
           {aiAnalysis && (
-            <div>
+            <div className="aiBox">
 
               <h4>AI Detection</h4>
 
@@ -367,9 +393,40 @@ const AddItem = () => {
             </div>
           )}
 
+          {/* TERMS */}
+
+          <label className="termsRow">
+
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) =>
+                setAcceptedTerms(
+                  e.target.checked
+                )
+              }
+            />
+
+            <span>
+              I agree to the{" "}
+
+              <span
+                className="termsLink"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/terms");
+                }}
+              >
+                Terms & Conditions
+              </span>
+            </span>
+
+          </label>
+
           <button
             type="submit"
             className="uploadBtn"
+            disabled={!acceptedTerms}
           >
 
             Upload Item

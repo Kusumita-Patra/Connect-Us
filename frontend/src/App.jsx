@@ -39,6 +39,8 @@ import ContactSeller from "./ContactSeller";
 
 import ChatPage from "./ChatPage";
 
+import TermsPage from "./pages/TermsPage";
+
 import "./theme.css";
 
 function App() {
@@ -149,6 +151,10 @@ function App() {
         <Route
           path="/my-chats"
           element={<MyChats />}
+        />
+        <Route
+          path="/terms"
+          element={<TermsPage />}
         />
 
       </Routes>
