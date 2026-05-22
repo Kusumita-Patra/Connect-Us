@@ -1,17 +1,8 @@
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 
-import {
-  useParams,
-  useNavigate,
-} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-import {
-  db,
-  auth,
-} from "./firebase";
+import { db, auth } from "./firebase";
 
 import {
   doc,
@@ -30,286 +21,91 @@ function ItemDetail() {
 
   const { id } = useParams();
 
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
-  const [item, setItem] =
-    useState(null);
+  const [item, setItem] = useState(null);
 
-  const [rating, setRating] =
-    useState(5);
+  const [rating, setRating] = useState(0);
 
-  const [review, setReview] =
-    useState("");
+  const [review, setReview] = useState("");
 
-  const [sellerFeedback,
-    setSellerFeedback] =
-    useState("");
+  const [sellerFeedback, setSellerFeedback] = useState("");
 
-  const [reviews, setReviews] =
-    useState([]);
+  const [reviews, setReviews] = useState([]);
 
-  const [currentUsername,
-    setCurrentUsername] =
-    useState("");
+  const [currentUsername, setCurrentUsername] = useState("");
 
-  // FETCH ITEM + REVIEWS
+  // CHAT FUNCTION
 
-  useEffect(() => {
+  const handleChat = async () => {
 
-    const fetchItem =
-      async () => {
+    try {
 
-        try {
+      const buyerId =
+        auth.currentUser.uid;
 
-          const docRef =
-            doc(
-              db,
-              "items",
-              id
-            );
+      const sellerId =
+        item.sellerId;
 
-          const docSnap =
-            await getDoc(
-              docRef
-            );
-
-          if (
-            docSnap.exists()
-          ) {
-
-            setItem({
-              id: docSnap.id,
-              ...docSnap.data(),
-            });
-
-            // REVIEWS
-
-            const reviewsRef =
-              collection(
-                db,
-                "items",
-                id,
-                "reviews"
-              );
-
-            const reviewSnap =
-              await getDocs(
-                reviewsRef
-              );
-
-            const reviewList =
-              reviewSnap.docs.map(
-                (doc) => ({
-
-                  id: doc.id,
-
-                  ...doc.data(),
-                })
-              );
-
-            setReviews(
-              reviewList
-            );
-
-            // USERNAME
-
-            if (
-              auth.currentUser
-            ) {
-
-              const userRef =
-                doc(
-                  db,
-                  "users",
-                  auth.currentUser.uid
-                );
-
-              const userSnap =
-                await getDoc(
-                  userRef
-                );
-
-              if (
-                userSnap.exists()
-              ) {
-
-                setCurrentUsername(
-                  userSnap.data()
-                    .username
-                );
-              }
-            }
-
-          } else {
-
-            console.log(
-              "No such item!"
-            );
-          }
-
-        } catch (error) {
-
-          console.error(
-            error
-          );
-        }
-      };
-
-    fetchItem();
-
-  }, [id]);
-
-  // CHAT
-
-  const handleChat =
-    async () => {
-
-      try {
-
-        const buyerId =
-          auth.currentUser.uid;
-
-        const sellerId =
-          item.sellerId;
-
-        if (
-          buyerId === sellerId
-        ) {
-
-          alert(
-            "You cannot chat with yourself"
-          );
-
-          return;
-        }
-
-        const itemId = id;
-
-        const chatId =
-          buyerId < sellerId
-            ? `${buyerId}_${sellerId}_${itemId}`
-            : `${sellerId}_${buyerId}_${itemId}`;
-
-        const chatRef =
-          doc(
-            db,
-            "chats",
-            chatId
-          );
-
-        const chatSnap =
-          await getDoc(
-            chatRef
-          );
-
-        if (
-          !chatSnap.exists()
-        ) {
-
-          await setDoc(
-            chatRef,
-
-            {
-              buyerId,
-
-              sellerId,
-
-              itemId,
-
-              itemName:
-                item.name,
-
-              participants: [
-                buyerId,
-                sellerId,
-              ],
-
-              createdAt:
-                serverTimestamp(),
-
-              lastMessage: "",
-            }
-          );
-        }
-
-        navigate(
-          `/chat/${chatId}`
-        );
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-      }
-    };
-
-  // ADD TO CART
-
-  const handleAddToCart =
-    async () => {
-
-      try {
-
-        const currentUser =
-          auth.currentUser;
-
-        if (!currentUser) {
-
-          navigate(
-            "/login"
-          );
-
-          return;
-        }
-
-        const cartRef =
-          doc(
-            db,
-            "users",
-            currentUser.uid,
-            "cart",
-            item.id
-          );
-
-        await setDoc(
-          cartRef,
-
-          {
-            itemId: item.id,
-
-            name: item.name,
-
-            price: item.price,
-
-            imageUrl:
-              item.imageUrl,
-
-            category:
-              item.category,
-
-            sellerId:
-              item.sellerId,
-
-            createdAt:
-              serverTimestamp(),
-          }
-        );
+      if (buyerId === sellerId) {
 
         alert(
-          "Added to cart"
+          "You cannot chat with yourself"
         );
 
-      } catch (error) {
-
-        console.error(
-          error
-        );
+        return;
       }
-    };
 
-  // SUBMIT REVIEW
+      const itemId = id;
+
+      const chatId =
+        buyerId < sellerId
+          ? `${buyerId}_${sellerId}_${itemId}`
+          : `${sellerId}_${buyerId}_${itemId}`;
+
+      const chatRef =
+        doc(
+          db,
+          "chats",
+          chatId
+        );
+
+      const chatSnap =
+        await getDoc(chatRef);
+
+      if (!chatSnap.exists()) {
+
+        await setDoc(chatRef, {
+
+          buyerId,
+
+          sellerId,
+
+          itemId,
+
+          participants: [
+            buyerId,
+            sellerId,
+          ],
+
+          createdAt:
+            serverTimestamp(),
+
+          lastMessage: "",
+        });
+      }
+
+      navigate(
+        `/chat/${chatId}`
+      );
+
+    } catch (error) {
+
+      console.error(error);
+    }
+  };
+
+  // ADD REVIEW
 
   const submitReview =
     async () => {
@@ -326,6 +122,7 @@ function ItemDetail() {
           ),
 
           {
+
             rating,
 
             review,
@@ -339,7 +136,7 @@ function ItemDetail() {
               currentUsername,
 
             createdAt:
-              serverTimestamp(),
+              new Date(),
           }
         );
 
@@ -353,13 +150,9 @@ function ItemDetail() {
 
         setRating(5);
 
-        window.location.reload();
-
       } catch (error) {
 
-        console.error(
-          error
-        );
+        console.error(error);
       }
     };
 
@@ -391,11 +184,174 @@ function ItemDetail() {
 
       } catch (error) {
 
-        console.error(
-          error
-        );
+        console.error(error);
       }
     };
+
+  // FETCH ITEM
+
+  useEffect(() => {
+
+    const fetchItem =
+      async () => {
+
+        try {
+
+          const docRef =
+            doc(
+              db,
+              "items",
+              id
+            );
+
+          const docSnap =
+            await getDoc(
+              docRef
+            );
+
+          if (
+            docSnap.exists()
+          ) {
+
+            setItem({
+
+              id: docSnap.id,
+
+              ...docSnap.data(),
+            });
+
+            // FETCH REVIEWS
+
+            const reviewsRef =
+              collection(
+                db,
+                "items",
+                id,
+                "reviews"
+              );
+
+            const reviewSnap =
+              await getDocs(
+                reviewsRef
+              );
+
+            const reviewList =
+              reviewSnap.docs.map(
+                (doc) => ({
+
+                  id: doc.id,
+
+                  ...doc.data(),
+                })
+              );
+
+            setReviews(
+              reviewList
+            );
+
+            // FETCH USERNAME
+
+            const userRef =
+              doc(
+                db,
+                "users",
+                auth.currentUser.uid
+              );
+
+            const userSnap =
+              await getDoc(
+                userRef
+              );
+
+            if (
+              userSnap.exists()
+            ) {
+
+              setCurrentUsername(
+                userSnap.data().username
+              );
+            }
+
+          } else {
+
+            console.log(
+              "No such item!"
+            );
+          }
+
+        } catch (error) {
+
+          console.error(error);
+        }
+      };
+
+    fetchItem();
+
+  }, [id]);
+
+  // ADD TO CART
+
+  const handleAddToCart =
+    async () => {
+
+      try {
+
+        const currentUser =
+          auth.currentUser;
+
+        if (!currentUser) {
+
+          navigate("/login");
+
+          return;
+        }
+
+        const cartRef =
+          doc(
+
+            db,
+
+            "users",
+
+            currentUser.uid,
+
+            "cart",
+
+            item.id
+          );
+
+        await setDoc(cartRef, {
+
+          itemId: item.id,
+
+          name: item.name,
+
+          price: item.price,
+
+          imageUrl:
+            item.imageUrl,
+
+          category:
+            item.category,
+
+          sellerId:
+            item.sellerId,
+
+          createdAt:
+            serverTimestamp(),
+        });
+
+        alert(
+          "Added to cart"
+        );
+
+      } catch (error) {
+
+        console.error(error);
+      }
+    };
+
+  // LOADING
 
   if (!item)
     return <h2>Loading...</h2>;
@@ -406,11 +362,15 @@ function ItemDetail() {
 
       <div className="itemCard">
 
+        {/* IMAGE */}
+
         <img
           src={item.imageUrl}
           alt={item.name}
           className="itemImage"
         />
+
+        {/* DETAILS */}
 
         <div className="itemDetails">
 
@@ -434,11 +394,9 @@ function ItemDetail() {
           </div>
 
           <div className="itemCategory">
-
             Category:
             {" "}
             {item.category}
-
           </div>
 
           <div className="itemDesc">
@@ -451,8 +409,10 @@ function ItemDetail() {
 
             <button
               className="buyBtn"
-              onClick={
-                handleChat
+              onClick={() =>
+                navigate(
+                  `/contact/${id}`
+                )
               }
             >
               Contact Seller
@@ -479,15 +439,13 @@ function ItemDetail() {
 
             <div className="starRating">
 
-              {[1,2,3,4,5].map(
+              {[1, 2, 3, 4, 5].map(
                 (star) => (
 
                   <span
                     key={star}
                     onClick={() =>
-                      setRating(
-                        star
-                      )
+                      setRating(star)
                     }
                     className={
                       star <= rating
@@ -514,7 +472,9 @@ function ItemDetail() {
 
             <textarea
               placeholder="Feedback about seller..."
-              value={sellerFeedback}
+              value={
+                sellerFeedback
+              }
               onChange={(e) =>
                 setSellerFeedback(
                   e.target.value
@@ -540,71 +500,55 @@ function ItemDetail() {
               Reviews
             </h3>
 
-            {
-              reviews.map(
-                (r) => (
+            {reviews.map((r) => (
 
-                  <div
-                    key={r.id}
-                    className="reviewCard"
-                  >
+              <div
+                key={r.id}
+                className="reviewCard"
+              >
+
+                <strong>
+                  {r.reviewerName}
+                </strong>
+
+                <div className="reviewRating">
+                  ⭐ {r.rating}/5
+                </div>
+
+                <p className="reviewText">
+                  {r.review}
+                </p>
+
+                {r.sellerFeedback && (
+
+                  <div className="sellerFeedback">
 
                     <strong>
-                      {r.reviewerName}
+                      Feedback on Seller:
                     </strong>
 
-                    <div className="reviewRating">
-
-                      ⭐ {r.rating}/5
-
-                    </div>
-
-                    <p className="reviewText">
-
-                      {r.review}
-
+                    <p>
+                      {r.sellerFeedback}
                     </p>
 
-                    {
-                      r.sellerFeedback && (
-
-                        <div className="sellerFeedback">
-
-                          <strong>
-
-                            Feedback on Seller:
-
-                          </strong>
-
-                          <p>
-                            {r.sellerFeedback}
-                          </p>
-
-                        </div>
-                      )
-                    }
-
-                    {
-                      r.reviewerId ===
-                      auth.currentUser.uid && (
-
-                        <button
-                          className="deleteReviewBtn"
-                          onClick={() =>
-                            deleteReview(
-                              r.id
-                            )
-                          }
-                        >
-                          Delete Review
-                        </button>
-                      )
-                    }
-
                   </div>
-                )
-              )
-            }
+                )}
+
+                {r.reviewerId ===
+                  auth.currentUser.uid && (
+
+                  <button
+                    className="deleteReviewBtn"
+                    onClick={() =>
+                      deleteReview(r.id)
+                    }
+                  >
+                    Delete Review
+                  </button>
+                )}
+
+              </div>
+            ))}
 
           </div>
 

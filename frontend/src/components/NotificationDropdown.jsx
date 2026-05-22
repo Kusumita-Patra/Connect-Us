@@ -16,33 +16,29 @@ const NotificationDropdown = ({
   const navigate =
     useNavigate();
 
-  const openNotification =
-    async (notification) => {
+  const openNotification = async (notification) => {
 
-      try {
+    try {
 
-        // DELETE FIRST
+      console.log("OPENING CHAT:", notification.chatId);
 
-        await deleteDoc(
-          doc(
-            db,
-            "notifications",
-            notification.id
-          )
-        );
+      navigate(`/chat/${notification.chatId}`);
 
-        // THEN NAVIGATE
+      // delete AFTER navigation
+      await deleteDoc(
+        doc(
+          db,
+          "notifications",
+          notification.id
+        )
+      );
 
-        navigate(
-          `/chat/${notification.chatId}`
-        );
+    } catch (error) {
 
-      } catch (error) {
+      console.log(error);
 
-        console.log(error);
-
-      }
-    };
+    }
+  };
 
   return (
 
@@ -77,11 +73,11 @@ const NotificationDropdown = ({
             <div
               key={notification.id}
 
-              onClick={() =>
-                openNotification(
-                  notification
-                )
-              }
+              onClick={() => {
+                console.log("CLICKED NOTIFICATION:", notification);
+
+                openNotification(notification);
+              }}
 
               style={{
                 padding: "12px",
