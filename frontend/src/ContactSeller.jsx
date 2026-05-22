@@ -118,6 +118,16 @@ function ContactSeller() {
 
   const handleStartChat =
     async () => {
+      if (!auth.currentUser) {
+
+        alert(
+          "Please login first to chat with the seller."
+        );
+
+        navigate("/login");
+
+        return;
+      }
 
       try {
 
