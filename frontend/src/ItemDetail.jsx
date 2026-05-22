@@ -35,6 +35,8 @@ function ItemDetail() {
 
   const [currentUsername, setCurrentUsername] = useState("");
 
+  const [showFullImage, setShowFullImage] = useState(false);
+
   // CHAT FUNCTION
 
   const handleChat = async () => {
@@ -360,6 +362,7 @@ function ItemDetail() {
 
     <div className="itemDetailContainer">
 
+
       <div className="itemCard">
 
         {/* IMAGE */}
@@ -368,6 +371,7 @@ function ItemDetail() {
           src={item.imageUrl}
           alt={item.name}
           className="itemImage"
+          onClick={() => setShowFullImage(true)}
         />
 
         {/* DETAILS */}
@@ -385,7 +389,7 @@ function ItemDetail() {
           <div
             className={
               item.status ===
-              "Sold Out"
+                "Sold Out"
                 ? "soldStatus"
                 : "stockStatus"
             }
@@ -537,15 +541,15 @@ function ItemDetail() {
                 {r.reviewerId ===
                   auth.currentUser.uid && (
 
-                  <button
-                    className="deleteReviewBtn"
-                    onClick={() =>
-                      deleteReview(r.id)
-                    }
-                  >
-                    Delete Review
-                  </button>
-                )}
+                    <button
+                      className="deleteReviewBtn"
+                      onClick={() =>
+                        deleteReview(r.id)
+                      }
+                    >
+                      Delete Review
+                    </button>
+                  )}
 
               </div>
             ))}
@@ -555,6 +559,26 @@ function ItemDetail() {
         </div>
 
       </div>
+      {/* FULL SCREEN IMAGE VIEW */}
+
+      {showFullImage && (
+  <div className="fullscreenOverlay">
+
+    <button
+      className="closePreviewBtn"
+      onClick={() => setShowFullImage(false)}
+    >
+      ✕ Close
+    </button>
+
+    <img
+      src={item.imageUrl}
+      alt={item.name}
+      className="fullscreenImage"
+    />
+
+  </div>
+)}
 
     </div>
   );
