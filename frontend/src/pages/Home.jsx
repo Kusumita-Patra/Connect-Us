@@ -12,6 +12,9 @@ const Home = () => {
   const [category, setCategory] = useState("");
   const [user, setUser] = useState(null);
 
+  const [showAbout, setShowAbout] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const navigate = useNavigate();
 
   // ✅ Fetch items
@@ -271,9 +274,15 @@ const Home = () => {
             </div>
 
             <div className="footerCenter">
-              <p>About</p>
-              <p>Contact</p>
-              <p>Help</p>
+              <p onClick={() => setShowAbout(true)}>
+  About
+</p>
+              <p onClick={() => setShowContact(true)}>
+  Contact
+</p>
+              <p onClick={() => setShowHelp(true)}>
+  Help
+</p>
             </div>
 
             <div className="footerRight">
@@ -282,6 +291,156 @@ const Home = () => {
           </div>
         </footer>
       </div>
+      {showAbout && (
+
+  <div className="aboutModalOverlay">
+
+    <div className="aboutModal">
+
+      <button
+        className="closeModalBtn"
+        onClick={() => setShowAbout(false)}
+      >
+        ✕
+      </button>
+
+      <h2>About Connect Us</h2>
+
+      <p className="aboutText">
+        Connect Us is a campus marketplace platform
+        built to help students buy and sell second-hand
+        items easily within their college community.
+      </p>
+
+      <h3>Team Members</h3>
+
+      <div className="teamList">
+
+        <div className="teamCard">
+          <h4>Asmita Chakraborty</h4>
+          <p>Frontend & backend handling</p>
+        </div>
+
+        <div className="teamCard">
+          <h4>Kusumita Patra</h4>
+          <p>Backend, Firebase and Frontend</p>
+        </div>
+
+        <div className="teamCard">
+          <h4>Abhimitra Roy</h4>
+          <p>UI/UX handling</p>
+        </div>
+
+        <div className="teamCard">
+          <h4>Banibrata Ghosh</h4>
+          <p>Testing & Documentation</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
+
+  {showContact && (
+
+  <div className="aboutModalOverlay">
+
+    <div className="aboutModal">
+
+      <button
+        className="closeModalBtn"
+        onClick={() => setShowContact(false)}
+      >
+        ✕
+      </button>
+
+      <h2>Contact Us</h2>
+
+      <p className="aboutText">
+        We'd love to hear from you.
+        Reach out to our team anytime.
+      </p>
+
+      <div className="teamList">
+
+        <div className="teamCard">
+          <h4>Email</h4>
+          <p>connectus.support@gmail.com</p>
+        </div>
+
+        <div className="teamCard">
+          <h4>Phone</h4>
+          <p>+91 9876543210</p>
+        </div>
+
+        <div className="teamCard">
+          <h4>Location</h4>
+          <p>Heritage Institute of Technology, Kolkata</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
+
+{showHelp && (
+
+  <div className="aboutModalOverlay">
+
+    <div className="aboutModal">
+
+      <button
+        className="closeModalBtn"
+        onClick={() => setShowHelp(false)}
+      >
+        ✕
+      </button>
+
+      <h2>Help Center</h2>
+
+      <p className="aboutText">
+        Here are some quick tips to use Connect Us smoothly.
+      </p>
+
+      <div className="teamList">
+
+        <div className="teamCard">
+          <h4>Buying Items</h4>
+          <p>
+            Browse listings, open item details,
+            and contact or chat with sellers directly.
+          </p>
+        </div>
+
+        <div className="teamCard">
+          <h4>Selling Items</h4>
+          <p>
+            Upload product details with images,
+            price, and category to list your item.
+          </p>
+        </div>
+
+        <div className="teamCard">
+          <h4>Reviews & Ratings</h4>
+          <p>
+            Buyers can rate items, leave reviews,
+            and give feedback about sellers.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
     </div>
   );
 };
