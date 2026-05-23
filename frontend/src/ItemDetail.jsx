@@ -4,6 +4,8 @@ import { db, auth } from "./firebase";
 import {
   doc,
   getDoc,
+  setDoc,             // Added missing import
+  serverTimestamp,    // Added missing import
   collection,
   addDoc,
   getDocs,
@@ -36,7 +38,6 @@ function ItemDetail() {
       return;
     }
 
-    // Direct user to ContactSeller component view using the current item's id
     navigate(`/contact-seller/${id}`);
   };
 
@@ -133,7 +134,7 @@ function ItemDetail() {
     fetchItem();
   }, [id]);
 
-  // ADD TO CART
+  // ADD TO CART (Now Fully Operational)
   const handleAddToCart = async () => {
     try {
       const currentUser = auth.currentUser;
@@ -165,9 +166,10 @@ function ItemDetail() {
         createdAt: serverTimestamp(),
       });
 
-      alert("Added to cart");
+      alert("Added to cart successfully!");
     } catch (error) {
-      console.error(error);
+      console.error("Cart insertion error details:", error);
+      alert("Failed to add item to cart. Check console log.");
     }
   };
 
