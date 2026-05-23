@@ -1256,7 +1256,11 @@ body {
 
     align-items: center;
 
-    gap: 14px;
+    gap: 40px;
+  }
+
+  .logo {
+    font-size:larger;
   }
 
 }
@@ -1451,4 +1455,38 @@ body {
 
     transform: scale(1);
   }
+}
+
+@media (max-width: 768px) {
+
+  .searchBar {
+   
+    align-items: stretch;
+    gap: 8px;
+
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .searchCategory {
+    width: 25%;
+  }
+
+  .searchInput {
+    width: 60%;
+  }
+
+  .searchBtn {
+    width: 2%;
+  }
+}
+
+.searchResultsPage .navbar {
+  display: flex;
+  align-items: center;
+}
+
+/* 🔥 center search bar only in this page */
+.searchResultsPage .searchBar {
+  margin: 0 auto;
 }
