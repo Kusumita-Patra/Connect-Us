@@ -66,7 +66,7 @@ const handleSignup = async () => {
       />
         <input
           type="text"
-          placeholder="Enter Institue Name "
+          placeholder="Enter Institute Name "
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
