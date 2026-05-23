@@ -3,13 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from "./firebase";
 import {
   doc,
-  getDoc,
-  setDoc,             // Added missing import
-  serverTimestamp,    // Added missing import
   collection,
   addDoc,
   getDocs,
+  getDoc,
+  setDoc,
   deleteDoc,
+  onSnapshot,
+  serverTimestamp,
 } from "firebase/firestore";
 import "./ItemDetail.css";
 
@@ -91,50 +92,54 @@ function ItemDetail() {
     }
   };
 
-  // FETCH ITEM
+  // FETCH ITEM (With live onSnapshot streaming)
   useEffect(() => {
-    const fetchItem = async () => {
+    const docRef = doc(db, "items", id);
+    
+    const unsubscribeItem = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setItem({
+          id: docSnap.id,
+          ...docSnap.data(),
+        });
+      } else {
+        console.log("No such item exists!");
+      }
+    }, (error) => {
+      console.error("Error streaming item details real-time:", error);
+    });
+
+    const fetchReviewsAndUser = async () => {
       try {
-        const docRef = doc(db, "items", id);
-        const docSnap = await getDoc(docRef);
+        const reviewsRef = collection(db, "items", id, "reviews");
+        const reviewSnap = await getDocs(reviewsRef);
+        const reviewList = reviewSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setReviews(reviewList);
 
-        if (docSnap.exists()) {
-          setItem({
-            id: docSnap.id,
-            ...docSnap.data(),
-          });
+        // SAFE FETCH USERNAME
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const userRef = doc(db, "users", currentUser.uid);
+          const userSnap = await getDoc(userRef);
 
-          // FETCH REVIEWS
-          const reviewsRef = collection(db, "items", id, "reviews");
-          const reviewSnap = await getDocs(reviewsRef);
-          const reviewList = reviewSnap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setReviews(reviewList);
-
-          // SAFE FETCH USERNAME
-          const currentUser = auth.currentUser;
-          if (currentUser) {
-            const userRef = doc(db, "users", currentUser.uid);
-            const userSnap = await getDoc(userRef);
-
-            if (userSnap.exists()) {
-              setCurrentUsername(userSnap.data().username);
-            }
+          if (userSnap.exists()) {
+            setCurrentUsername(userSnap.data().username);
           }
-        } else {
-          console.log("No such item!");
         }
       } catch (error) {
-        console.error(error);
+        console.error("Error loading structural sub-collections:", error);
       }
     };
 
-    fetchItem();
+    fetchReviewsAndUser();
+
+    return () => unsubscribeItem();
   }, [id]);
 
-  // ADD TO CART (Now Fully Operational)
+  // ADD TO CART
   const handleAddToCart = async () => {
     try {
       const currentUser = auth.currentUser;
@@ -175,6 +180,10 @@ function ItemDetail() {
 
   if (!item) return <h2>Loading...</h2>;
 
+  // Compute clean display text fallbacks
+  const isSoldOut = item.status === "Sold Out";
+  const statusDisplayText = isSoldOut ? "Sold Out" : "In Stock";
+
   return (
     <div className="itemDetailContainer">
       <div className="itemCard">
@@ -190,9 +199,12 @@ function ItemDetail() {
         <div className="itemDetails">
           <div className="itemTitle">{item.name}</div>
           <div className="itemPrice">₹{item.price}</div>
-          <div className={item.status === "Sold Out" ? "soldStatus" : "stockStatus"}>
-            {item.status}
+          
+          {/* DYNAMIC TEXT RENDERING */}
+          <div className={isSoldOut ? "soldStatus" : "stockStatus"}>
+            {statusDisplayText}
           </div>
+          
           <div className="itemCategory">Category: {item.category}</div>
           <div className="itemDesc">{item.description}</div>
 
@@ -206,13 +218,13 @@ function ItemDetail() {
               className="contactBtn"
               onClick={handleAddToCart}
               disabled={
-                item.status === "Sold Out" ||
+                isSoldOut ||
                 auth.currentUser?.uid === item.sellerId
               }
             >
               {auth.currentUser?.uid === item.sellerId
                 ? "Your Item"
-                : item.status === "Sold Out"
+                : isSoldOut
                 ? "Sold Out"
                 : "Add to Cart"}
             </button>

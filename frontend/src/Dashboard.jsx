@@ -132,6 +132,20 @@ function Dashboard() {
     }
   };
 
+  // NEW: DELETE LISTED ITEM FROM GLOBAL MARKETPLACE
+  const deleteListedItem = async (itemId) => {
+    const confirmDelete = window.confirm("Are you sure you want to permanently delete this listing from the marketplace?");
+    if (!confirmDelete) return;
+
+    try {
+      await deleteDoc(doc(db, "items", itemId));
+      alert("Listing successfully removed.");
+    } catch (error) {
+      console.error("Error deleting marketplace item listing:", error);
+      alert("Failed to remove item listing. Check rules/permissions.");
+    }
+  };
+
   // LOGOUT
   const handleLogout = async () => {
     try {
@@ -161,39 +175,51 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* NEW: MY LISTED ITEMS SECTION (Hides completely if empty) */}
-{myItems.length > 0 && (
-  <div className="cartSection">
-    <h2>My Listed Items</h2>
-    <div className="cartGrid">
-      {myItems.map((item) => (
-        <div
-          className="cartCard"
-          key={item.id}
-          onClick={() => navigate(`/item/${item.id}`)}
-          style={{ cursor: "pointer" }}
-        >
-          <img src={item.imageUrl} alt={item.name} />
-          <div className="cartContent">
-            <h3>{item.name}</h3>
-            <div className="cartPrice">₹{item.price}</div>
-            <div className="cartCategory">{item.category}</div>
-            <div 
-              style={{ 
-                marginTop: "10px", 
-                fontSize: "12px", 
-                fontWeight: "bold", 
-                color: item.status === "Sold Out" ? "#dc3545" : "#28a745" 
-              }}
-            >
-              Status: {item.status || "Available"}
-            </div>
+      {/* MY LISTED ITEMS SECTION */}
+      {myItems.length > 0 && (
+        <div className="cartSection">
+          <h2>My Listed Items</h2>
+          <div className="cartGrid">
+            {myItems.map((item) => (
+              <div
+                className="cartCard"
+                key={item.id}
+                onClick={() => navigate(`/item/${item.id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                <img src={item.imageUrl} alt={item.name} />
+                <div className="cartContent">
+                  <h3>{item.name}</h3>
+                  <div className="cartPrice">₹{item.price}</div>
+                  <div className="cartCategory">{item.category}</div>
+                  <div 
+                    style={{ 
+                      marginTop: "10px", 
+                      fontSize: "12px", 
+                      fontWeight: "bold", 
+                      color: item.status === "Sold Out" ? "#dc3545" : "#28a745" 
+                    }}
+                  >
+                    Status: {item.status || "Available"}
+                  </div>
+                  
+                  {/* DELETE LISTING ACTION BUTTON */}
+                  <button
+                    className="removeCartBtn"
+                    style={{ backgroundColor: "#dc3545", marginTop: "12px" }}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Stops navigation behavior to detail page
+                      deleteListedItem(item.id);
+                    }}
+                  >
+                    Delete Listing
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-)}
+      )}
 
       {/* MY CART */}
       <div className="cartSection">

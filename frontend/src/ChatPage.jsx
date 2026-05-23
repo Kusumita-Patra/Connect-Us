@@ -81,14 +81,36 @@ function ChatPage() {
     }
   };
 
+  // 6. SELLER: CONFIRM ORDER COMPLETION (Updated with reliable Item ID Extraction)
   const confirmSellerOrder = async () => {
     try {
+      // Robust Fallback: If chatData hasn't loaded, parse the itemId directly out of the chatId parameter
+      const computedItemId = chatData?.itemId || chatId.split("_")[2];
+      
+      console.log("Attempting order confirmation for Item ID:", computedItemId);
+
+      if (!computedItemId) {
+        console.error("Order completion halted: Item ID missing from chat reference context.");
+        alert("Could not locate the Item ID. Please try again.");
+        return;
+      }
+
+      // Step A: Update Chat Status to complete
       await updateDoc(doc(db, "chats", chatId), {
         status: "completed",
       });
-      await sendSystemMessage("✅ Order Confirmed! The handover transaction is officially complete.");
+
+      // Step B: Mark the item inventory reference as Sold Out
+      await updateDoc(doc(db, "items", computedItemId), {
+        status: "Sold Out"
+      });
+
+      // Step C: Push an automated system event log to the timeline track
+      await sendSystemMessage("✅ Order Confirmed! The handover transaction is officially complete and the item is marked as Sold Out.");
+      
     } catch (error) {
-      console.error("Error completing order:", error);
+      console.error("Error completing order lifecycle sequence:", error);
+      alert("Failed to confirm order execution. Check your browser logs.");
     }
   };
 
