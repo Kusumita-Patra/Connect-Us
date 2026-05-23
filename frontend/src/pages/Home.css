@@ -1213,3 +1213,108 @@ body {
 }
 }
 
+/* DESKTOP ONLY */
+
+@media (min-width: 769px) {
+
+  .navbar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+  }
+
+  .logoSection {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 30px;
+  }
+
+  .navIcons {
+
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .logoSection {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+  }
+
+}
+
+/* DEFAULT */
+
+.mobileProfile {
+
+  display: none;
+}
+
+.desktopProfile {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+  .mobileProfile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+  }
+
+  .desktopProfile {
+
+    display: none;
+  }
+
+}
+
+/* DESKTOP */
+
+@media (min-width: 769px) {
+
+  .mobileProfile {
+
+    display: none;
+  }
+
+  .desktopProfile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+  }
+
+}

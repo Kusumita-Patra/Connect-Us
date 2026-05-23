@@ -51,36 +51,38 @@ const Home = () => {
 
   <h2 className="logo">Connect Us</h2>
 
-  {user ? (
+  <div className="mobileProfile">
 
-    <span
-      className="profileLink"
-      onClick={() => navigate("/dashboard")}
-    >
-      My Profile
-    </span>
-
-  ) : (
-
-    <>
+    {user ? (
 
       <span
         className="profileLink"
-        onClick={() => navigate("/login")}
+        onClick={() => navigate("/dashboard")}
       >
-        Login
+        My Profile
       </span>
 
-      <span
-        className="profileLink"
-        onClick={() => navigate("/signup")}
-      >
-        Signup
-      </span>
+    ) : (
 
-    </>
+      <>
+        <span
+          className="profileLink"
+          onClick={() => navigate("/login")}
+        >
+          Login
+        </span>
 
-  )}
+        <span
+          className="profileLink"
+          onClick={() => navigate("/signup")}
+        >
+          Signup
+        </span>
+      </>
+
+    )}
+
+  </div>
 
 </div>
         {/* Search Bar */}
@@ -137,6 +139,39 @@ const Home = () => {
         <button className="viewAllBtn" onClick={() => navigate("/items")}>
           View All Items
         </button>
+
+        <div className="desktopProfile">
+
+  {user ? (
+
+    <span
+      className="profileLink"
+      onClick={() => navigate("/dashboard")}
+    >
+      My Profile
+    </span>
+
+  ) : (
+
+    <>
+      <span
+        className="profileLink"
+        onClick={() => navigate("/login")}
+      >
+        Login
+      </span>
+
+      <span
+        className="profileLink"
+        onClick={() => navigate("/signup")}
+      >
+        Signup
+      </span>
+    </>
+
+  )}
+
+</div>
 
         {/* User Section */}
        {/* User Section */}
