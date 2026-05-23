@@ -40,7 +40,7 @@ const SearchResults = () => {
   }, [query, category]);
 
   return (
-    <div>
+    <div className="searchResultsPage">
 
       {/* 🔥 NAVBAR WITH SEARCH BAR */}
       <nav className="navbar">
@@ -82,11 +82,6 @@ const SearchResults = () => {
             Search
           </button>
 
-        </div>
-
-        <div className="navIcons">
-          <span>My Account</span>
-          <span>Cart</span>
         </div>
       </nav>
 

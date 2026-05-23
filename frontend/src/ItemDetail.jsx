@@ -305,65 +305,50 @@ setReviews([
 
   // ADD TO CART
 
-  const handleAddToCart =
-    async () => {
+  const handleAddToCart = async () => {
+  try {
+    const currentUser = auth.currentUser;
 
-      try {
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
 
-        const currentUser =
-          auth.currentUser;
+    // 🚨 SOLD OUT CHECK
+    if (item.status === "Sold Out") {
+      alert("Sorry, this item is sold out and cannot be added to cart.");
+      return;
+    }
 
-        if (!currentUser) {
+    // 🚨 SELF PURCHASE CHECK (MAIN FEATURE)
+    if (currentUser.uid === item.sellerId) {
+      alert("You cannot purchase your own listed item.");
+      return;
+    }
 
-          navigate("/login");
+    const cartRef = doc(
+      db,
+      "users",
+      currentUser.uid,
+      "cart",
+      item.id
+    );
 
-          return;
-        }
+    await setDoc(cartRef, {
+      itemId: item.id,
+      name: item.name,
+      price: item.price,
+      imageUrl: item.imageUrl,
+      category: item.category,
+      sellerId: item.sellerId,
+      createdAt: serverTimestamp(),
+    });
 
-        const cartRef =
-          doc(
-
-            db,
-
-            "users",
-
-            currentUser.uid,
-
-            "cart",
-
-            item.id
-          );
-
-        await setDoc(cartRef, {
-
-          itemId: item.id,
-
-          name: item.name,
-
-          price: item.price,
-
-          imageUrl:
-            item.imageUrl,
-
-          category:
-            item.category,
-
-          sellerId:
-            item.sellerId,
-
-          createdAt:
-            serverTimestamp(),
-        });
-
-        alert(
-          "Added to cart"
-        );
-
-      } catch (error) {
-
-        console.error(error);
-      }
-    };
+    alert("Added to cart");
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   // LOADING
 
@@ -435,13 +420,19 @@ setReviews([
             </button>
 
             <button
-              className="contactBtn"
-              onClick={
-                handleAddToCart
-              }
-            >
-              Add to Cart
-            </button>
+  className="contactBtn"
+  onClick={handleAddToCart}
+  disabled={
+    item.status === "Sold Out" ||
+    auth.currentUser?.uid === item.sellerId
+  }
+>
+  {auth.currentUser?.uid === item.sellerId
+    ? "Your Item"
+    : item.status === "Sold Out"
+    ? "Sold Out"
+    : "Add to Cart"}
+</button>
 
           </div>
 
