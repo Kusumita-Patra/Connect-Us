@@ -116,97 +116,105 @@ function ContactSeller() {
 
   // START CHAT
 
-  const handleStartChat =
-    async () => {
-      if (!auth.currentUser) {
+const handleStartChat = async () => {
 
-        alert(
-          "Please login first to chat with the seller."
-        );
+  try {
 
-        navigate("/login");
+    console.log("STEP 1");
 
-        return;
-      }
+    if (!auth.currentUser) {
+      alert("Login first");
+      return;
+    }
 
-      try {
+    const buyerId =
+      auth.currentUser.uid;
 
-        const buyerId =
-          auth.currentUser.uid;
+    const sellerId =
+      item.sellerId;
 
-        const sellerId =
-          item.sellerId;
+    console.log("STEP 2");
 
-        // GET BUYER DETAILS
+    // BUYER FETCH
 
-        const buyerRef = doc(
-          db,
-          "users",
-          buyerId
-        );
+    const buyerRef = doc(
+      db,
+      "users",
+      buyerId
+    );
 
-        const buyerSnap =
-          await getDoc(
-            buyerRef
-          );
+    const buyerSnap =
+      await getDoc(buyerRef);
 
-        const buyerData =
-          buyerSnap.data();
+    console.log("STEP 3");
 
-        console.log(
-          "BUYER USERNAME:",
-          buyerData?.username
-        );
+    const buyerData =
+      buyerSnap.data();
 
-        // CREATE OR GET CHAT
+    // CREATE CHAT
 
-        const chatId =
-          await createOrGetChat({
+    console.log(
+      "STEP 4 CREATE CHAT"
+    );
 
-            buyerId,
+    const chatId =
+      await createOrGetChat({
 
-            sellerId,
+        buyerId,
 
-            itemId:
-              item.id,
+        sellerId,
 
-            itemName:
-              item.name,
-          });
+        itemId: item.id,
 
-        // SEND NOTIFICATION
+        itemName:
+          item.name,
+      });
 
-        await sendChatNotification({
+    console.log(
+      "STEP 5 CHAT CREATED",
+      chatId
+    );
 
-          sellerId,
+    // NOTIFICATION
 
-          buyerId,
+    console.log(
+      "STEP 6 SEND NOTIFICATION"
+    );
 
-          itemId:
-            item.id,
+    await sendChatNotification({
 
-          itemTitle:
-            item.name,
+      sellerId,
 
-          buyerName:
-            buyerData?.username ||
-            "Someone",
+      buyerId,
 
-          chatId,
-        });
+      itemId:
+        item.id,
 
-        // OPEN CHAT
+      itemTitle:
+        item.name,
 
-        navigate(
-          `/chat/${chatId}`
-        );
+      buyerName:
+        buyerData?.username,
 
-      } catch (error) {
+      chatId,
+    });
 
-        console.error(error);
+    console.log(
+      "STEP 7 DONE"
+    );
 
-      }
-    };
+    navigate(`/chat/${chatId}`);
+
+  } catch (error) {
+
+    console.error(
+      "FULL ERROR:",
+      error
+    );
+
+    alert(error.message);
+  }
+};
   // LOADING
 
   if (!item)

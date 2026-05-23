@@ -33,34 +33,38 @@ export const createOrGetChat =
       chatId
     );
 
+    // CHECK IF CHAT EXISTS
+
     const chatSnap =
       await getDoc(chatRef);
 
-    // CREATE CHAT ONLY IF NOT EXISTS
+    // CREATE ONLY IF NOT EXISTS
 
     if (!chatSnap.exists()) {
 
-      await setDoc(chatRef, {
+      await setDoc(
+        chatRef,
+        {
 
-        buyerId,
-
-        sellerId,
-
-        itemId,
-
-        itemName,
-
-        participants: [
           buyerId,
+
           sellerId,
-        ],
 
-        createdAt:
-          serverTimestamp(),
+          itemId,
 
-        lastMessage: "",
+          itemName,
 
-      });
+          participants: [
+            buyerId,
+            sellerId,
+          ],
+
+          createdAt:
+            serverTimestamp(),
+
+          lastMessage: "",
+        }
+      );
     }
 
     return chatId;

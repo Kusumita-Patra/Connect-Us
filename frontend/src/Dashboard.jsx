@@ -557,93 +557,42 @@ function Dashboard() {
 
       {/* MY CHATS */}
 
-      <div className="purchaseSection">
+      {/* MY CHATS */}
+<div className="purchaseSection">
+  <h2>My Chats</h2>
 
-        <h2>
-          My Chats
-        </h2>
-
-        {
-          myChats.filter(
-            (chat) =>
-              chat.itemName ||
-              chat.lastMessage
-          ).length === 0 ? (
-
-            <div className="emptyPurchases">
-
-              <h3>
-                No chats yet
-              </h3>
-
-            </div>
-
-          ) : (
-
-            <div className="purchaseGrid">
-
-              {
-                myChats
-
-                  .filter(
-                    (chat) =>
-                      chat.itemName ||
-                      chat.lastMessage
-                  )
-
-                  .map(
-                    (chat) => (
-
-                      <div
-
-                        key={chat.id}
-
-                        className="purchaseCard"
-
-                        onClick={() =>
-                          navigate(
-                            `/chat/${chat.id}`
-                          )
-                        }
-
-                        style={{
-                          cursor:
-                            "pointer",
-                        }}
-                      >
-
-                        <div className="purchaseContent">
-
-                          <h3>
-
-                            {
-                              chat.itemName ||
-                              "Chat"
-                            }
-
-                          </h3>
-
-                          <p>
-
-                            {
-                              chat.lastMessage ||
-                              "No messages yet"
-                            }
-
-                          </p>
-
-                        </div>
-
-                      </div>
-                    )
-                  )
-              }
-
-            </div>
-          )
-        }
-
+  {
+    myChats.filter(
+      (chat) => chat.lastMessage && chat.lastMessage !== "No messages yet"
+    ).length === 0 ? (
+      <div className="emptyPurchases">
+        <h3>No chats yet</h3>
       </div>
+    ) : (
+      <div className="purchaseGrid">
+        {
+          myChats
+            .filter(
+              (chat) => chat.lastMessage && chat.lastMessage !== "No messages yet"
+            )
+            .map((chat) => (
+              <div
+                key={chat.id}
+                className="purchaseCard"
+                onClick={() => navigate(`/chat/${chat.id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                <div className="purchaseContent">
+                  <h3>{chat.itemName || "Chat"}</h3>
+                  <p>{chat.lastMessage}</p>
+                </div>
+              </div>
+            ))
+        }
+      </div>
+    )
+  }
+</div>
 
     </div>
   );

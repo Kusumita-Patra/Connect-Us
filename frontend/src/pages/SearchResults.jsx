@@ -112,7 +112,10 @@ const SearchResults = () => {
                 <p className="price">₹{item.price}</p>
                 <p className="category">{item.category}</p>
 
-                <button>Buy Now</button>
+                <button
+                  onClick={() => navigate(`/item/${item.id}`)}
+                >Buy Now
+                </button>
               </div>
             ))
           )}

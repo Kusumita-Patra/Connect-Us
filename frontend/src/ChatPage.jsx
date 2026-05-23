@@ -56,90 +56,41 @@ function ChatPage() {
 
   const sendMessage = async () => {
 
-    if (!newMessage.trim())
-      return;
+  if (!newMessage.trim())
+    return;
 
-    try {
+  try {
 
-      // GET CHAT INFO
+    const currentUserId =
+      auth.currentUser.uid;
 
-      const chatRef = doc(
-        db,
-        "chats",
-        chatId
-      );
+    // GET CHAT INFO
 
-      const chatSnap =
-        await getDoc(chatRef);
+    let chatRef = doc(
+      db,
+      "chats",
+      chatId
+    );
 
-      const chatData =
-        chatSnap.data();
+    let chatSnap =
+      await getDoc(chatRef);
 
-      // CURRENT USER
+    let chatData;
 
-      const currentUserId =
-        auth.currentUser.uid;
+    // IF CHAT DOESN'T EXIST
+    // CREATE IT NOW
 
-      // FIND RECEIVER
+    if (!chatSnap.exists()) {
 
-      const receiverId =
-        currentUserId ===
-          chatData.buyerId
-          ? chatData.sellerId
-          : chatData.buyerId;
+      // GET ITEM
 
-      // SEND MESSAGE
-
-      await addDoc(
-
-        collection(
-          db,
-          "chats",
-          chatId,
-          "messages"
-        ),
-
-        {
-          text: newMessage,
-
-          senderId:
-            currentUserId,
-
-          createdAt:
-            serverTimestamp(),
-        }
-      );
-      // UPDATE LAST MESSAGE
-
-      await updateDoc(
-        doc(db, "chats", chatId),
-        {
-          lastMessage: newMessage,
-          lastMessageTime: serverTimestamp(),
-        }
-      );
-
-      // GET CURRENT USER DETAILS
-
-      const userRef = doc(
-        db,
-        "users",
-        currentUserId
-      );
-
-      const userSnap =
-        await getDoc(userRef);
-
-      const userData =
-        userSnap.data();
-
-      // SEND NOTIFICATION
-      // GET ITEM DETAILS
+      const itemId =
+        chatId.split("_")[2];
 
       const itemRef = doc(
         db,
         "items",
-        chatData.itemId
+        itemId
       );
 
       const itemSnap =
@@ -148,35 +99,137 @@ function ChatPage() {
       const itemData =
         itemSnap.data();
 
-      // SEND NOTIFICATION
+      const sellerId =
+        itemData.sellerId;
 
-      await sendChatNotification({
+      const buyerId =
+        currentUserId;
 
-        sellerId: receiverId,
+      await createOrGetChat({
 
-        buyerId: currentUserId,
+        buyerId,
 
-        itemId:
-          chatData.itemId,
+        sellerId,
 
-        itemTitle:
-          itemData?.name ||
-          "Item",
+        itemId,
 
-        buyerName:
-          userData?.username ||
-          "Someone",
-
-        chatId,
+        itemName:
+          itemData.name,
       });
 
-      setNewMessage("");
+      // REFRESH CHAT
 
-    } catch (error) {
-
-      console.error(error);
+      chatSnap =
+        await getDoc(chatRef);
     }
-  };
+
+    chatData =
+      chatSnap.data();
+
+    // RECEIVER
+
+    const receiverId =
+      currentUserId ===
+        chatData.buyerId
+        ? chatData.sellerId
+        : chatData.buyerId;
+
+    // SEND MESSAGE
+
+    await addDoc(
+
+      collection(
+        db,
+        "chats",
+        chatId,
+        "messages"
+      ),
+
+      {
+
+        text: newMessage,
+
+        senderId:
+          currentUserId,
+
+        createdAt:
+          serverTimestamp(),
+      }
+    );
+
+    // UPDATE LAST MESSAGE
+
+    await updateDoc(
+      doc(db, "chats", chatId),
+      {
+
+        lastMessage:
+          newMessage,
+
+        lastMessageTime:
+          serverTimestamp(),
+      }
+    );
+
+    // USER DETAILS
+
+    const userRef = doc(
+      db,
+      "users",
+      currentUserId
+    );
+
+    const userSnap =
+      await getDoc(userRef);
+
+    const userData =
+      userSnap.data();
+
+    // ITEM DETAILS
+
+    const itemRef = doc(
+      db,
+      "items",
+      chatData.itemId
+    );
+
+    const itemSnap =
+      await getDoc(itemRef);
+
+    const itemData =
+      itemSnap.data();
+
+    // SEND NOTIFICATION
+
+    await sendChatNotification({
+
+      sellerId:
+        receiverId,
+
+      buyerId:
+        currentUserId,
+
+      itemId:
+        chatData.itemId,
+
+      itemTitle:
+        itemData?.name ||
+        "Item",
+
+      buyerName:
+        userData?.username ||
+        "Someone",
+
+      chatId,
+    });
+
+    setNewMessage("");
+
+  } catch (error) {
+
+    console.error(error);
+  }
+};
 
   return (
 
