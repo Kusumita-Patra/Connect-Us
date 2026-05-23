@@ -146,6 +146,93 @@ body {
   padding: 10px;
 }
 
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  .actionCards {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 25px;
+  }
+
+  .card {
+
+    width: 130px;
+
+    min-height: 125px;
+
+    padding: 12px;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    box-sizing: border-box; 
+
+  overflow: hidden;
+  }
+
+  .card img {
+
+    width: 48px;
+
+    height: 48px;
+
+    object-fit: contain;
+
+    margin-bottom: 8px;
+  }
+
+  .card button {
+
+  width: auto;
+
+  min-width: 72px;
+
+  padding: 4px 10px;
+
+  font-size: 0.68rem;
+
+  border: none;
+
+  border-radius: 999px;
+
+  background: #eab308;
+
+  white-space: nowrap;
+
+  margin-top: 4px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+}
+.card 
+
+  .or {
+
+    padding: 6px 8px;
+
+    font-size: 0.75rem;
+  }
+
+}
 /* Action buttons container */
 .navActions {
   display: flex;
@@ -568,3 +655,561 @@ body {
   font-weight: 500;
   margin-top: 8px;
 }
+
+@media (max-width: 768px) {
+
+  .cardContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .navLinks {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+}
+
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  /* HERO SECTION */
+
+  .overlay {
+    min-height: auto;
+    padding: 30px 15px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .overlay h1 {
+    font-size: 2rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+
+  .overlay p {
+    font-size: 1rem;
+    line-height: 1.6;
+    width: 95%;
+    margin-bottom: 30px;
+  }
+
+  /* HERO BUTTON/CARDS SECTION */
+
+  .heroButtons,
+  .heroCards,
+  .buySellContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* INDIVIDUAL CARDS */
+
+  .heroCard,
+  .buyCard,
+  .sellCard {
+    width: 90%;
+    max-width: 280px;
+    padding: 20px;
+  }
+
+  /* REMOVE BIG EMPTY SPACES */
+
+  .heroSection,
+  .homeHero,
+  .bannerSection {
+    min-height: auto;
+    padding-bottom: 40px;
+  }
+
+  /* NAVBAR */
+
+  .navbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .navbar h1 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  /* BUTTONS */
+
+  button {
+    width: auto;
+    min-width: 120px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .homeContainer,
+  .mainContainer,
+  .home {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
+}
+
+.overlay {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.buySellContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin-top: 35px;
+  flex-wrap: wrap;
+}
+
+.buyCard,
+.sellCard {
+  width: 160px;
+  min-height: 180px;
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: 0.3s;
+}
+
+.buyCard:hover,
+.sellCard:hover {
+  transform: translateY(-5px);
+}
+
+.buyCard img,
+.sellCard img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.buyCard button,
+.sellCard button {
+  margin-top: 15px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f7c600;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+  .buySellContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .buyCard,
+  .sellCard {
+    width: 85%;
+    max-width: 300px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .heroSection,
+  .overlay {
+    min-height: 75vh;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+}
+
+.buySellContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin-top: 35px;
+  flex-wrap: nowrap;
+}
+
+.buyCard,
+.sellCard {
+  width: 145px;
+  height: 170px;
+
+  background: rgba(255,255,255,0.92);
+
+  backdrop-filter: blur(8px);
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.18);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buyCard button,
+.sellCard button {
+
+  width: 100%;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 10px;
+
+  background: #f4b400;
+
+  color: black;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.buyCard button:hover,
+.sellCard button:hover {
+
+  transform: scale(1.03);
+
+}
+
+@media (max-width: 768px) {
+
+  body,
+  html,
+  #root {
+
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .homeContainer,
+  .mainContainer {
+
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .buySellContainer {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 28px;
+
+    width: 100%;
+  }
+
+  .buyCard,
+  .sellCard {
+
+    width: 105px;
+
+    height: 138px;
+
+    padding: 12px;
+
+    border-radius: 14px;
+
+    box-shadow:
+      0 5px 14px rgba(0,0,0,0.15);
+
+    flex-shrink: 0;
+  }
+
+  .buyCard img,
+  .sellCard img {
+
+    width: 52px;
+    height: 52px;
+  }
+
+  .buyCard button,
+  .sellCard button {
+
+    padding: 7px;
+
+    font-size: 0.82rem;
+
+    border-radius: 8px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .overlay {
+
+    min-height: 50vh;
+
+    padding-top: 20px;
+
+    padding-bottom: 20px;
+  }
+
+}
+
+.overlay h1 {
+
+  margin-bottom: 10px;
+}
+
+.overlay p {
+
+  margin-bottom: 20px;
+} 
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* NAVBAR */
+
+  .navbar {
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .logo {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .searchBar {
+    width: 100%;
+    margin: 0;
+  }
+
+  .navActions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .navActions button,
+  .viewAllBtn,
+  .uploadNavBtn {
+    width: 100%;
+    margin: 0;
+  }
+
+  .navIcons {
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* HERO */
+
+  .hero {
+    height: 58vh;
+  }
+
+  .overlay {
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .overlay h1 {
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .overlay p {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  /* ACTION CARDS */
+
+  .actionCards {
+    gap: 12px;
+  }
+
+  .card {
+    width: 130px;
+    min-height: 115px;
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .card img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .card button {
+    width: auto;
+    min-width: 70px;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    border-radius: 999px;
+  }
+
+  .or {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+
+  /* LISTINGS */
+
+  .listingsSection {
+    padding: 20px 15px;
+  }
+
+  .listingsContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .listingCard {
+    width: 100%;
+  }
+
+  /* FOOTER */
+
+  .footerContainer {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .profileLink {
+
+  cursor: pointer;
+
+  font-weight: 500;
+
+  transition: 0.3s;
+}
+
+.profileLink:hover {
+
+  color: #2563eb;
+}
+
+.logoSection {
+
+  display: flex;
+
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+/* BIG GAP after logo */
+
+.logo {
+
+  margin-right: 80px;
+}
+
+/* SMALL GAP between login/signup/profile */
+
+.profileLink {
+
+  margin-right: 10px;
+
+  cursor: pointer;
+
+  font-size: 0.95rem;
+
+  font-weight: 500;
+
+  transition: 0.3s;
+}
+
+.profileLink:hover {
+
+  color: #2563eb;
+}
+
+.profileLink {
+
+  cursor: pointer;
+
+  font-size: 0.95rem;
+
+  font-weight: 500;
+
+  transition: 0.3s;
+}
+
+.profileLink:hover {
+
+  color: #2563eb;
+}
+}
+

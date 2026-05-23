@@ -358,3 +358,45 @@
 
 }
 
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  .itemDetailContainer {
+    padding: 15px;
+  }
+
+  .itemCard {
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .itemImage {
+    width: 100%;
+    height: auto;
+  }
+
+  .itemTitle {
+    font-size: 24px;
+  }
+
+  .itemPrice {
+    font-size: 22px;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .buyBtn,
+  .contactBtn,
+  .chatBtn {
+    width: 100%;
+  }
+
+  .reviewSection textarea {
+    width: 100%;
+  }
+
+}

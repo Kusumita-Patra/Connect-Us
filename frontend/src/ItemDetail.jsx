@@ -13,6 +13,7 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import "./ItemDetail.css";
@@ -114,34 +115,44 @@ function ItemDetail() {
 
       try {
 
-        await addDoc(
+        const newReview = {
 
-          collection(
-            db,
-            "items",
-            item.id,
-            "reviews"
-          ),
+  rating,
 
-          {
+  review,
 
-            rating,
+  sellerFeedback,
 
-            review,
+  reviewerId:
+    auth.currentUser.uid,
 
-            sellerFeedback,
+  reviewerName:
+    currentUsername,
 
-            reviewerId:
-              auth.currentUser.uid,
+  createdAt:
+    new Date(),
+};
 
-            reviewerName:
-              currentUsername,
+const docRef = await addDoc(
 
-            createdAt:
-              new Date(),
-          }
-        );
+  collection(
+    db,
+    "items",
+    item.id,
+    "reviews"
+  ),
 
+  newReview
+);
+
+setReviews([
+  {
+    id: docRef.id,
+    ...newReview,
+  },
+  ...reviews,
+]);
+        
         alert(
           "Review added!"
         );
@@ -150,7 +161,7 @@ function ItemDetail() {
 
         setSellerFeedback("");
 
-        setRating(5);
+        setRating(0);
 
       } catch (error) {
 
@@ -158,6 +169,7 @@ function ItemDetail() {
       }
     };
 
+    
   // DELETE REVIEW
 
   const deleteReview =
@@ -475,7 +487,7 @@ function ItemDetail() {
             />
 
             <textarea
-              placeholder="Feedback about seller..."
+              placeholder="Feedback on seller..."
               value={
                 sellerFeedback
               }

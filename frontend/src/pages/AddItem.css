@@ -110,3 +110,18 @@
   border-radius: 10px;
   margin-top: 12px;
 }
+
+@media (max-width: 768px) {
+
+  .addItemCard {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .addItemForm input,
+  .addItemForm textarea,
+  .addItemForm select {
+    width: 100%;
+  }
+
+}

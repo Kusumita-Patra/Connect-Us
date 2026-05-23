@@ -47,8 +47,42 @@ const Home = () => {
     <div>
       {/* Navbar */}
       <nav className="navbar">
-        <h2 className="logo">Connect Us</h2>
+        <div className="logoSection">
 
+  <h2 className="logo">Connect Us</h2>
+
+  {user ? (
+
+    <span
+      className="profileLink"
+      onClick={() => navigate("/dashboard")}
+    >
+      My Profile
+    </span>
+
+  ) : (
+
+    <>
+
+      <span
+        className="profileLink"
+        onClick={() => navigate("/login")}
+      >
+        Login
+      </span>
+
+      <span
+        className="profileLink"
+        onClick={() => navigate("/signup")}
+      >
+        Signup
+      </span>
+
+    </>
+
+  )}
+
+</div>
         {/* Search Bar */}
         <div className="searchBar">
           <select
@@ -105,19 +139,8 @@ const Home = () => {
         </button>
 
         {/* User Section */}
-        <div className="navIcons">
-          {user ? (
-            <>
-              <span>{user.name}</span>
-              <span onClick={() => navigate("/dashboard")}>My Profile</span>
-            </>
-          ) : (
-            <>
-              <span onClick={() => navigate("/login")}>Login</span>
-              <span onClick={() => navigate("/signup")}>Signup</span>
-            </>
-          )}
-        </div>
+       {/* User Section */}
+
       </nav>
 
       {/* Hero Section */}
