@@ -132,11 +132,10 @@ function App() {
           }
         />
 
+        {/* FIXED LINE */}
         <Route
-          path="/contact/:id"
-          element={
-            <ContactSeller />
-          }
+          path="/contact-seller/:id"
+          element={<ContactSeller />}
         />
 
         <Route

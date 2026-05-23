@@ -4,8 +4,6 @@ import { db, auth } from "./firebase";
 import {
   doc,
   getDoc,
-  setDoc,
-  serverTimestamp,
   collection,
   addDoc,
   getDocs,
@@ -25,47 +23,21 @@ function ItemDetail() {
   const [currentUsername, setCurrentUsername] = useState("");
   const [showFullImage, setShowFullImage] = useState(false);
 
-  // CHAT FUNCTION
-  const handleChat = async () => {
-    try {
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
-        navigate("/login");
-        return;
-      }
-
-      const buyerId = currentUser.uid;
-      const sellerId = item.sellerId;
-
-      if (buyerId === sellerId) {
-        alert("You cannot chat with yourself");
-        return;
-      }
-
-      const itemId = id;
-      const chatId =
-        buyerId < sellerId
-          ? `${buyerId}_${sellerId}_${itemId}`
-          : `${sellerId}_${buyerId}_${itemId}`;
-
-      const chatRef = doc(db, "chats", chatId);
-      const chatSnap = await getDoc(chatRef);
-
-      if (!chatSnap.exists()) {
-        await setDoc(chatRef, {
-          buyerId,
-          sellerId,
-          itemId,
-          participants: [buyerId, sellerId],
-          createdAt: serverTimestamp(),
-          lastMessage: "",
-        });
-      }
-
-      navigate(`/chat/${chatId}`);
-    } catch (error) {
-      console.error(error);
+  // REDIRECT TO INTERMEDIARY CONTACT SELLER PROFILE VIEW
+  const handleContactSellerRedirect = () => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      navigate("/login");
+      return;
     }
+
+    if (currentUser.uid === item.sellerId) {
+      alert("This is your own listed item.");
+      return;
+    }
+
+    // Direct user to ContactSeller component view using the current item's id
+    navigate(`/contact-seller/${id}`);
   };
 
   // ADD REVIEW
@@ -140,7 +112,7 @@ function ItemDetail() {
           }));
           setReviews(reviewList);
 
-          // SAFE FETCH USERNAME (Only runs if a user session is active)
+          // SAFE FETCH USERNAME
           const currentUser = auth.currentUser;
           if (currentUser) {
             const userRef = doc(db, "users", currentUser.uid);
@@ -199,7 +171,6 @@ function ItemDetail() {
     }
   };
 
-  // LOADING
   if (!item) return <h2>Loading...</h2>;
 
   return (
@@ -217,17 +188,15 @@ function ItemDetail() {
         <div className="itemDetails">
           <div className="itemTitle">{item.name}</div>
           <div className="itemPrice">₹{item.price}</div>
-          <div
-            className={item.status === "Sold Out" ? "soldStatus" : "stockStatus"}
-          >
+          <div className={item.status === "Sold Out" ? "soldStatus" : "stockStatus"}>
             {item.status}
           </div>
           <div className="itemCategory">Category: {item.category}</div>
           <div className="itemDesc">{item.description}</div>
 
-          {/* BUTTONS */}
+          {/* ACTION BUTTONS */}
           <div className="actionButtons">
-            <button className="buyBtn" onClick={handleChat}>
+            <button className="buyBtn" onClick={handleContactSellerRedirect}>
               Contact Seller
             </button>
 
@@ -279,7 +248,6 @@ function ItemDetail() {
             <h3>Reviews</h3>
             {reviews.map((r) => (
               <div key={r.id} className="reviewCard">
-                ...
                 <strong>{r.reviewerName}</strong>
                 <div className="reviewRating">⭐ {r.rating}/5</div>
                 <p className="reviewText">{r.review}</p>
