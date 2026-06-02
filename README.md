@@ -165,7 +165,7 @@ Stores saved products for users.
 git clone <https://github.com/Kusumita-Patra/Connect-Us>
 ```
 ## Documentation & Presentation
-- 🎥 Demo Video: https://drive.google.com/drive/u/0/home
+- 🎥 Demo Video: https://drive.google.com/file/d/1whA2vgwc6CH0uPUAjFfQMbIOMasixjVc/view?usp=drive_link
 
 
 ### Navigate to Project
